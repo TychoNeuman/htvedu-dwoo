@@ -1,0 +1,43 @@
+{extends 'layouts/base.tpl'}
+
+{block "content"}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Gebruikers</h1>
+    </div>
+    <div class="card shadow h-100 py-2">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Gebruikersnaam</th>
+                    <th scope="col">Voornaam</th>
+                    <th scope="col">Achternaam</th>
+                    <th scope="col">Permissie</th>
+                </tr>
+                </thead>
+                <tbody>
+                {if empty($users)}
+                    <tr>
+                        <td><em>Geen gebruikers gevonden...</em></td>
+                    </tr>
+                {else}
+                    {foreach $users user}
+                        <tr>
+                            <td>{$user.username}</td>
+                            <td>{$user.firstname}</td>
+                            <td>{$user.lastname}</td>
+                            <td>{$user.role}</td>
+                            <td><a href="index.php?p=userpage&id={$user.id}"><button type="button" class="btn btn-outline-primary btn-sm">Bekijk</button></a></td>
+                            <td><i class="fas fa-trash"></i></td>
+                        </tr>
+                    {/foreach}
+                {/if}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{/block}
