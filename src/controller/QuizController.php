@@ -10,9 +10,19 @@ use App\Model\Quiz\NumberSeries;
 
 class QuizController
 {
-    private $m_iQuizType;
+    private function _setQuiz(IQuiz $p_oQuiz, array $p_aResult) : IQuiz
+    {
+        $p_oQuiz->setId((int)$p_aResult['id']);
+        $p_oQuiz->setType($p_aResult['type']);
+        $p_oQuiz->setName($p_aResult['name']);
+        $p_oQuiz->setTime($p_aResult['time']);
+        $p_oQuiz->setScore($p_aResult['score']);
+        $p_oQuiz->setQuestions($p_aResult['questions']);
 
-    public function determineQuizType(int $p_iQuizType) : array
+        return $p_oQuiz;
+    }
+
+    public function determineQuizType(int $p_iQuizType) : string
     {
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("SELECT 
@@ -26,7 +36,7 @@ class QuizController
         );
         $l_oPreparedStatement->execute($l_aBindings);
 
-        return $l_oPreparedStatement->fetch();
+        return $l_oPreparedStatement->fetch()['quiz_type'];
     }
 
     public function getQuiz(int $p_iQuizId) : IQuiz
@@ -43,40 +53,65 @@ class QuizController
         $l_oPreparedStatement->execute($l_aBindings);
         $l_aResult = $l_oPreparedStatement->fetch();
 
-        switch ($l_aResult['type'])
+        switch($l_aResult['type'])
         {
             case '1' :
-                $l_oNumberSeries = new NumberSeries();
-                return $l_oNumberSeries;
+                $l_oQuiz = self::_setQuiz(new NumberSeries(), $l_aResult);
                 break;
-
         }
 
-
+        return $l_oQuiz;
     }
 
-    public function addQuiz(array $p_aPost)
+    public function addQuizTitle(array $p_aPost)
     {
+        $l_iType = (int)$p_aPost['quiz-type'];
+        $l_sName = $p_aPost['quiz-name'];
+
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("INSERT INTO 
-                                    `quiz` (`type`) 
+                                    `quiz` (`type`, `name`) 
                                 VALUES 
-                                    (:quiz_type)");
+                                    (:quiz_type, :name)");
         $l_aBindings = array(
-            'quiz_type' => (int)$p_aPost['quiz-type']
+            'quiz_type' => $l_iType,
+            'name' => $l_sName
         );
         $l_oPreparedStatement->execute($l_aBindings);
 
         $l_iLastId = HtvDb::getInstance()->lastInsertId();
 
-        switch($_POST['quiz-type'])
+        header("Location: index.php?p=quizaddquestions&type=" . $l_iType . "&id=" . $l_iLastId);
+    }
+
+    public function addQuizQuestions(IQuiz $l_oQuiz)
+    {
+        switch($l_oQuiz->getType())
         {
-            case "1" :
-                header("Location: index.php?p=quizcreate&id=" . $l_iLastId);
-                break;
-            case "2" :
-                header("Location: index.php?p=dashboard");
+            case '1' :
+                //Insert into questions_numberseries
                 break;
         }
     }
+
+    public function getQuizOverviewProjector() : array
+    {
+        $l_aConvertedResult = array();
+        $l_oPreparedStatement = HtvDb::getInstance()
+            ->prepare("SELECT 
+                                      * 
+                                FROM 
+                                     `quiz` ");
+        $l_oPreparedStatement->execute();
+        $l_aResult = $l_oPreparedStatement->fetchAll();
+
+        //Let's add the full name of the quiz type for readability later on
+        foreach($l_aResult as $l_aSingleResult){
+            $l_aSingleResult['typeName'] = self::determineQuizType((int)$l_aSingleResult['type']);
+            $l_aConvertedResult[] = $l_aSingleResult;
+        }
+
+        return $l_aConvertedResult;
+    }
+
 }

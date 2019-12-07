@@ -51,19 +51,25 @@ if(!isset($_SESSION['username'])){
                 }
                 break;
             case 'quiz' :
-                echo $l_oDwoo->get(PAGES_BASE . 'quizoverview.tpl');
-                break;
-            case 'quizadd' :
-                echo $l_oDwoo->get(PAGES_BASE . 'quizadd.tpl');
-                break;
-            case 'quizcreate' :
                 $l_oQuizController = new QuizController();
+                $l_aData = array('quizes' => $l_oQuizController->getQuizOverviewProjector());
+                echo $l_oDwoo->get(PAGES_BASE . 'quizoverview.tpl', $l_aData);
+                break;
+            case 'quizaddinfo' :
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
-                    $l_oQuizController->addQuiz($_POST);
-                }else{
-                    $l_oQuizController->getQuiz($_GET['id']);
-                    echo $l_oDwoo->get(PAGES_BASE . 'quizcreate.tpl');
+                    $l_oQuizController = new QuizController();
+                    $l_oQuizController->addQuizTitle($_POST);
                 }
+                echo $l_oDwoo->get(PAGES_BASE . 'quizaddinfo.tpl');
+                break;
+            case 'quizaddquestions' :
+                $l_oQuizController = new QuizController();
+                $l_aData = array(
+                    'type' => $_GET['type'],
+                    'quizinfo' => $l_oQuizController->getQuiz($_GET['id'])
+                );
+                // Go to the page to add questions
+                echo $l_oDwoo->get(PAGES_BASE . 'quizaddquestions.tpl', $l_aData);
                 break;
             case 'settings' :
                 echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl');

@@ -13,62 +13,62 @@ class NumberSeries implements IQuiz
     private $m_iScore;
     private $m_aQuestions;
 
-    public function setId()
+    public function setId(int $p_iId)
     {
-
+        $this->m_iId = $p_iId;
     }
 
-    public function getId()
+    public function getId(): int
     {
-        // TODO: Implement getId() method.
+        return $this->m_iId;
     }
 
-    public function setName()
+    public function setName(string $p_sName)
     {
-        // TODO: Implement setName() method.
+        $this->m_sName = $p_sName;
     }
 
-    public function getName()
+    public function getName(): string
     {
-        // TODO: Implement getName() method.
+        return $this->m_sName;
     }
 
-    public function setType()
+    public function setType(int $p_iType)
     {
         // TODO: Implement setType() method.
     }
 
-    public function getType()
+    public function getType(): int
     {
         // TODO: Implement getType() method.
     }
 
-    public function setTime()
+    public function setTime(int $p_iTime)
     {
         // TODO: Implement setTime() method.
     }
 
-    public function getTime()
+    public function getTime(): int
     {
         // TODO: Implement getTime() method.
     }
 
-    public function setScore()
+    public function setScore(int $p_iScore)
     {
         // TODO: Implement setScore() method.
     }
 
-    public function getScore()
+    public function getScore(): int
     {
         // TODO: Implement getScore() method.
     }
 
-    public function setQuestions()
+    public function setQuestions(array $p_aQuestions)
     {
         // TODO: Implement setQuestions() method.
     }
 
-    public function getQuestions()
+    public function getQuestions(): array
     {
         // TODO: Implement getQuestions() method.
     }

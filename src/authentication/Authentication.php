@@ -8,6 +8,7 @@ namespace App\Authentication;
 
 use App\Controller\UserController;
 use App\Database\HtvDb;
+use App\System\HtvConfig;
 
 class Authentication
 {
@@ -28,7 +29,7 @@ class Authentication
         $l_oPreparedStatement->execute($l_aBindings);
         $l_aResult = $l_oPreparedStatement->fetch();
 
-        if(hash_hmac('sha256', $l_sInsertedPassword, 'secretKey') === $l_aResult['password']){
+        if(hash_hmac('sha256', $l_sInsertedPassword, HtvConfig::get('secretkey')) === $l_aResult['password']){
             $l_oUserController = new UserController();
             $l_oUser = $l_oUserController->getUser((int)$l_aResult['id']);
             $_SESSION['username'] = $l_oUser->getUsername();

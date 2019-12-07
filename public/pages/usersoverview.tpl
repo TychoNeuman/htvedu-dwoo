@@ -11,10 +11,10 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">Gebruikersnaam</th>
-                    <th scope="col">Voornaam</th>
-                    <th scope="col">Achternaam</th>
-                    <th scope="col">Permissie</th>
+                    <th style="border-top: none !important;" scope="col">Gebruikersnaam</th>
+                    <th style="border-top: none !important;" scope="col">Voornaam</th>
+                    <th style="border-top: none !important;" scope="col">Achternaam</th>
+                    <th style="border-top: none !important;" scope="col">Permissie</th>
                 </tr>
                 </thead>
                 <tbody>

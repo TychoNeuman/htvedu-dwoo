@@ -34,7 +34,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="inputDateOfBirth">Geboortedatum</label>
-                            <input type="date" class="form-control" id="inputDateOfBirth" name="dateofbirth">
+                            <input type="date" class="form-control" id="inputDateOfBirth" name="date-of-birth">
                         </div>
                     </div>
                     <div class="form-group">
@@ -44,11 +44,11 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="inputEmail1">E-mail:</label>
-                            <input type="text" class="form-control" id="inputEmail1" placeholder="anoniem@gmail.com" name="email1">
+                            <input type="text" class="form-control" id="inputEmail1" placeholder="anoniem@gmail.com" name="email">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="inputEmail2">E-mail eerste verzorger:</label>
-                            <input type="text" class="form-control" id="inputEmail2" placeholder="anoniem@outlook.com" name="email2">
+                            <input type="text" class="form-control" id="inputEmail2" placeholder="anoniem@outlook.com" name="second_email">
                         </div>
                     </div>
                     <div class="form-group">

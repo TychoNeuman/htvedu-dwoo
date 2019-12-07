@@ -8,9 +8,29 @@ namespace App\Controller;
 
 use App\Database\HtvDb;
 use App\Model\User;
+use App\System\HtvConfig;
 
 class UserController
 {
+    private function _setUser(User $p_oUser, array $p_aResult) : User
+    {
+        $p_oUser->setId((int)$p_aResult['id']);
+        $p_oUser->setUsername($p_aResult['username']);
+        $p_oUser->setFirstName($p_aResult['firstname']);
+        $p_oUser->setLastName($p_aResult['lastname']);
+        $p_oUser->setDateOfBirth($p_aResult['date_of_birth']);
+        $p_oUser->setAddress($p_aResult['address']);
+        $p_oUser->setPostcode($p_aResult['postcode']);
+        $p_oUser->setResidence($p_aResult['residence']);
+        $p_oUser->setPassword($p_aResult['password']);
+        $p_oUser->setPhoneNumber($p_aResult['phonenumber']);
+        $p_oUser->setEmail($p_aResult['email']);
+        $p_oUser->setSecondEmail($p_aResult['second_email']);
+        $p_oUser->setRole($p_aResult['role']);
+
+        return $p_oUser;
+    }
+
     //Fetches all users
     public function getAllUsers() : array
     {
@@ -21,16 +41,11 @@ class UserController
         $l_oPreparedStatement->execute();
         $l_aResult = $l_oPreparedStatement->fetchAll();
 
-        foreach($l_aResult as $p_oUser){
-            $l_oUser = new User();
-            $l_oUser->setId((int)$p_oUser['id']);
-            $l_oUser->setUsername($p_oUser['username']);
-            $l_oUser->setFirstLetter($p_oUser['firstletter']);
-            $l_oUser->setFirstName($p_oUser['firstname']);
-            $l_oUser->setLastName($p_oUser['lastname']);
-            $l_oUser->setRole($p_oUser['role']);
+        foreach($l_aResult as $l_aUser){
+            $l_oUser = self::_setUser(new User(), $l_aUser);
             $l_aUserArray[] = $l_oUser;
         }
+
         return $l_aUserArray;
     }
 
@@ -45,15 +60,7 @@ class UserController
         $l_oPreparedStatement->execute($l_aBindings);
         $l_aResult = $l_oPreparedStatement->fetch();
 
-        $l_oUser = new User();
-        $l_oUser->setId((int)$l_aResult['id']);
-        $l_oUser->setUsername($l_aResult['username']);
-        $l_oUser->setFirstLetter($l_aResult['firstletter']);
-        $l_oUser->setFirstName($l_aResult['firstname']);
-        $l_oUser->setLastName($l_aResult['lastname']);
-        $l_oUser->setRole($l_aResult['role']);
-
-        return $l_oUser;
+        return self::_setUser(new User(), $l_aResult);
     }
 
     public function getUserProjector(int $p_iUserId) : array
@@ -63,7 +70,6 @@ class UserController
         return array(
             'id' => $l_oUser->getId(),
             'username' => $l_oUser->getUsername(),
-            'firstletter' => $l_oUser->getFirstLetter(),
             'firstname' => $l_oUser->getFirstName(),
             'lastname' => $l_oUser->getLastName(),
             'role' => $l_oUser->getRole()
@@ -90,18 +96,29 @@ class UserController
 
     public function addUser(array $p_aPost)
     {
-        $l_sHashedPassword = hash_hmac('sha256', $_POST['password'], 'secretKey');
+        $l_sHashedPassword = hash_hmac('sha256', $_POST['password'], HtvConfig::get('secretkey'));
 
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare(
                 "INSERT INTO 
-                            `users` (`username`, `firstname`, `password`)
+                            `users` (`username`, `password`, `firstname`, `lastname`, `date_of_birth`,
+                            `address`, `postcode`, `residence`, `phonenumber`, `email`, `second_email`, `role`)
                             VALUES 
-                            (:username, :firstname, :password)");
+                            (:username, :password, :firstname, :lastname, :date_of_birth,
+                            :address, :postcode, :residence, :phonenumber, :email, :second_email, :role)");
         $l_aBindings = array(
             'username' => $p_aPost['username'],
+            'password' => $l_sHashedPassword,
             'firstname' => $p_aPost['firstname'],
-            'password' => $l_sHashedPassword
+            'lastname' => $p_aPost['lastname'],
+            'date_of_birth' => date('Y-m-d', strtotime($p_aPost['date-of-birth'])),
+            'address' => $p_aPost['address'],
+            'postcode' => $p_aPost['postcode'],
+            'residence' => $p_aPost['residence'],
+            'phonenumber' => $p_aPost['phonenumber'],
+            'email' => $p_aPost['email'],
+            'second_email' => $p_aPost['second_email'],
+            'role' => $p_aPost['permission']
         );
         $l_oPreparedStatement->execute($l_aBindings);
 
