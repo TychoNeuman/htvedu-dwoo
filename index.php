@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * TODO :
+ *  - Set header("Refresh: 0") on all pages that set post variables on the same page
+ */
+
+
 session_start();
 
 require 'vendor/autoload.php';
@@ -58,18 +65,43 @@ if(!isset($_SESSION['username'])){
             case 'quizaddinfo' :
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
                     $l_oQuizController = new QuizController();
-                    $l_oQuizController->addQuizTitle($_POST);
+                    $l_oQuizController->addQuizInfo($_POST);
                 }
                 echo $l_oDwoo->get(PAGES_BASE . 'quizaddinfo.tpl');
                 break;
             case 'quizaddquestions' :
                 $l_oQuizController = new QuizController();
+                $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
+                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                    $l_oQuizController->addQuizQuestions($l_oQuiz, $_POST);
+                }
                 $l_aData = array(
-                    'type' => $_GET['type'],
-                    'quizinfo' => $l_oQuizController->getQuiz($_GET['id'])
+                    'type' => $l_oQuiz->getType(),
+                    'quiztype' => $l_oQuizController->determineQuizType($l_oQuiz->getType()),
+                    'quizname' => $l_oQuiz->getName(),
+                    'quizscore' => $l_oQuiz->getScore(),
+                    'quiztime' => $l_oQuiz->getTime(),
+                    'questions' => $l_oQuiz->getQuestions()
                 );
-                // Go to the page to add questions
                 echo $l_oDwoo->get(PAGES_BASE . 'quizaddquestions.tpl', $l_aData);
+                break;
+            case 'quizpage' :
+                $l_oQuizController = new QuizController();
+                $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
+                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                    $l_oUserController = new UserController();
+                    $l_oQuizController->submitQuizAnswers($l_oQuiz, $_POST, $l_oUserController->getUser($_SESSION['id']));
+                }
+                $l_aData = array(
+                    'type' => $l_oQuiz->getType(),
+                    'quiztype' => $l_oQuizController->determineQuizType($l_oQuiz->getType()),
+                    'quizname' => $l_oQuiz->getName(),
+                    'quizscore' => $l_oQuiz->getScore(),
+                    'quiztime' => $l_oQuiz->getTime(),
+                    'questions' => $l_oQuiz->getQuestions(),
+                    'index' => 1
+                );
+                echo $l_oDwoo->get(PAGES_BASE . 'quizpage.tpl', $l_aData);
                 break;
             case 'settings' :
                 echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl');

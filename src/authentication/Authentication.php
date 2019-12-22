@@ -32,6 +32,7 @@ class Authentication
         if(hash_hmac('sha256', $l_sInsertedPassword, HtvConfig::get('secretkey')) === $l_aResult['password']){
             $l_oUserController = new UserController();
             $l_oUser = $l_oUserController->getUser((int)$l_aResult['id']);
+            $_SESSION['id'] = $l_oUser->getId();
             $_SESSION['username'] = $l_oUser->getUsername();
             $_SESSION['firstname'] = $l_oUser->getFirstName();
             $_SESSION['lastname'] = $l_oUser->getLastName();

@@ -18,4 +18,6 @@ interface IQuiz
     public function getScore() : int;
     public function setQuestions(array $p_aQuestions);
     public function getQuestions() : array;
+
+    public function fetchQuestionsToArray() : array;
 }

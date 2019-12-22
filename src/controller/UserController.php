@@ -30,7 +30,6 @@ class UserController
 
         return $p_oUser;
     }
-
     //Fetches all users
     public function getAllUsers() : array
     {

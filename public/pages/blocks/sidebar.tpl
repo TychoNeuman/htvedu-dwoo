@@ -22,9 +22,9 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
-        Interface
-    </div>
+{*    <div class="sidebar-heading">*}
+{*        Interface*}
+{*    </div>*}
 
     <!-- Nav Item - Users Menu -->
     <li class="nav-item">

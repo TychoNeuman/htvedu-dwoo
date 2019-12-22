@@ -29,7 +29,7 @@
                         <div class="form-group col-md-2">
                             <label for="inputTime">Tijd:</label>
                             <div class="input-group-prepend">
-                                <input type="text" class="form-control" id="inputTime" placeholder="10" name="inputTime">
+                                <input type="text" class="form-control" id="inputTime" placeholder="10" name="time">
                                 <div class="input-group-text">Minuten</div>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-2">
                             <label for="inputScore">Score:</label>
-                            <input type="text" class="form-control" id="inputScore" placeholder="100" name="inputScore">
+                            <input type="text" class="form-control" id="inputScore" placeholder="100" name="score">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Volgende</button>

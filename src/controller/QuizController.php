@@ -7,17 +7,19 @@ namespace App\Controller;
 use App\Database\HtvDb;
 use App\Model\Quiz\IQuiz;
 use App\Model\Quiz\NumberSeries;
+use App\Model\User;
+use App\System\Validator;
 
 class QuizController
 {
     private function _setQuiz(IQuiz $p_oQuiz, array $p_aResult) : IQuiz
     {
         $p_oQuiz->setId((int)$p_aResult['id']);
-        $p_oQuiz->setType($p_aResult['type']);
+        $p_oQuiz->setType((int)$p_aResult['type']);
         $p_oQuiz->setName($p_aResult['name']);
-        $p_oQuiz->setTime($p_aResult['time']);
-        $p_oQuiz->setScore($p_aResult['score']);
-        $p_oQuiz->setQuestions($p_aResult['questions']);
+        $p_oQuiz->setTime((int)$p_aResult['time']);
+        $p_oQuiz->setScore((int)$p_aResult['score']);
+        $p_oQuiz->setQuestions($p_oQuiz->fetchQuestionsToArray());
 
         return $p_oQuiz;
     }
@@ -44,7 +46,8 @@ class QuizController
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("SELECT 
                                         * 
-                                 FROM `quiz` 
+                                 FROM 
+                                      `quiz` 
                                  WHERE 
                                        `id` = :id");
         $l_aBindings = array(
@@ -63,35 +66,62 @@ class QuizController
         return $l_oQuiz;
     }
 
-    public function addQuizTitle(array $p_aPost)
+    public function addQuizInfo(array $p_aPost)
     {
-        $l_iType = (int)$p_aPost['quiz-type'];
-        $l_sName = $p_aPost['quiz-name'];
-
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("INSERT INTO 
-                                    `quiz` (`type`, `name`) 
+                                    `quiz` 
+                                    (`type`, `name`, `time`, `score`) 
                                 VALUES 
-                                    (:quiz_type, :name)");
+                                    (:quiz_type, :name, :time, :score)");
         $l_aBindings = array(
-            'quiz_type' => $l_iType,
-            'name' => $l_sName
+            'quiz_type' => (int)$p_aPost['quiz-type'],
+            'name' => $p_aPost['quiz-name'],
+            'time' => $p_aPost['time'],
+            'score' => $p_aPost['score']
         );
         $l_oPreparedStatement->execute($l_aBindings);
 
         $l_iLastId = HtvDb::getInstance()->lastInsertId();
 
-        header("Location: index.php?p=quizaddquestions&type=" . $l_iType . "&id=" . $l_iLastId);
+        header("Location: index.php?p=quizaddquestions&id=" . $l_iLastId);
     }
 
-    public function addQuizQuestions(IQuiz $l_oQuiz)
+    // TODO : Dont forget question score
+    public function addQuizQuestions(IQuiz $l_oQuiz, array $l_aPost)
     {
         switch($l_oQuiz->getType())
         {
             case '1' :
-                //Insert into questions_numberseries
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare("INSERT INTO 
+                                                `questions_numberseries` 
+                                                (`quiz_id`, `num1`, `num2`, `num3`, `num4`, `num5`, `num6`,
+                                                `incorrect_num1`, `incorrect_num2`, `incorrect_num3`,
+                                                 `answer`, `score`) 
+                                        VALUES 
+                                               (:quiz_id, :num1, :num2, :num3, :num4, :num5, :num6,
+                                                :incorrect_num1, :incorrect_num2, :incorrect_num3,
+                                                :answer, :score)");
+                $l_aBindings = array(
+                    'quiz_id' => $l_oQuiz->getId(),
+                    'num1' => $l_aPost['num1'],
+                    'num2' => $l_aPost['num2'],
+                    'num3' => $l_aPost['num3'],
+                    'num4' => $l_aPost['num4'],
+                    'num5' => $l_aPost['num5'],
+                    'num6' => $l_aPost['num6'],
+                    'incorrect_num1' => $l_aPost['incorrect_num1'],
+                    'incorrect_num2' => $l_aPost['incorrect_num2'],
+                    'incorrect_num3' => $l_aPost['incorrect_num3'],
+                    'answer' => $l_aPost['answer'],
+                    'score' => $l_aPost['score']
+                );
+                $l_oPreparedStatement->execute($l_aBindings);
                 break;
         }
+
+        header("Refresh: 0");
     }
 
     public function getQuizOverviewProjector() : array
@@ -112,6 +142,32 @@ class QuizController
         }
 
         return $l_aConvertedResult;
+    }
+
+
+    public function submitQuizAnswers(iQuiz $p_oQuiz, array $p_aAnswers, User $p_oUser)
+    {
+        $l_oHtvDb = HtvDb::getInstance();
+
+        //The last item in the post array is 'submit', so let's remove that.
+        array_pop($p_aAnswers);
+
+        foreach($p_aAnswers as $l_mQuestionId=>$l_mAnswer)
+        {
+            $l_oPreparedStatement = $l_oHtvDb->prepare(
+                "INSERT INTO
+                                `quiz_submitted_answers`
+                                (`quiz_id`, `user_id`, `question_id`, `answer`)
+                            VALUES
+                                (:quiz_id, :user_id, :question_id, :answer)");
+            $l_aBindings = array(
+                'quiz_id' => $p_oQuiz->getId(),
+                'user_id' => $p_oUser->getId(),
+                'question_id' => $l_mQuestionId,
+                'answer' => $l_mAnswer
+            );
+            $l_oPreparedStatement->execute($l_aBindings);
+        }
     }
 
 }

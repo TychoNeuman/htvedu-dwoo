@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model\Quiz;
 
+use App\Database\HtvDb;
+
 class NumberSeries implements IQuiz
 {
     private $m_iId;
@@ -13,63 +15,33 @@ class NumberSeries implements IQuiz
     private $m_iScore;
     private $m_aQuestions;
 
-    public function setId(int $p_iId)
+    public function fetchQuestionsToArray(): array
     {
-        $this->m_iId = $p_iId;
+        if(isset($this->m_iId)){
+            $l_oPreparedStatement = HtvDb::getInstance()
+                ->prepare('SELECT 
+                                            * 
+                                     FROM 
+                                          `questions_numberseries` 
+                                     WHERE 
+                                           `quiz_id` = ' . $this->m_iId);
+            $l_oPreparedStatement->execute();
+
+            return $l_oPreparedStatement->fetchAll();
+        }
     }
 
-    public function getId(): int
-    {
-        return $this->m_iId;
-    }
+    public function setId(int $p_iId) {$this->m_iId = $p_iId;}
+    public function getId(): int {return $this->m_iId;}
+    public function setName(string $p_sName) {$this->m_sName = $p_sName;}
+    public function getName(): string {return $this->m_sName;}
+    public function setType(int $p_iType) {$this->m_sType = $p_iType;}
+    public function getType(): int {return $this->m_sType;}
+    public function setTime(int $p_iTime) {$this->m_iTime = $p_iTime;}
+    public function getTime(): int {return $this->m_iTime;}
+    public function setScore(int $p_iScore) {$this->m_iScore = $p_iScore;}
+    public function getScore(): int {return $this->m_iScore;}
+    public function setQuestions(array $p_aQuestions) {$this->m_aQuestions = $p_aQuestions;}
+    public function getQuestions(): array {return $this->m_aQuestions;}
 
-    public function setName(string $p_sName)
-    {
-        $this->m_sName = $p_sName;
-    }
-
-    public function getName(): string
-    {
-        return $this->m_sName;
-    }
-
-    public function setType(int $p_iType)
-    {
-        // TODO: Implement setType() method.
-    }
-
-    public function getType(): int
-    {
-        // TODO: Implement getType() method.
-    }
-
-    public function setTime(int $p_iTime)
-    {
-        // TODO: Implement setTime() method.
-    }
-
-    public function getTime(): int
-    {
-        // TODO: Implement getTime() method.
-    }
-
-    public function setScore(int $p_iScore)
-    {
-        // TODO: Implement setScore() method.
-    }
-
-    public function getScore(): int
-    {
-        // TODO: Implement getScore() method.
-    }
-
-    public function setQuestions(array $p_aQuestions)
-    {
-        // TODO: Implement setQuestions() method.
-    }
-
-    public function getQuestions(): array
-    {
-        // TODO: Implement getQuestions() method.
-    }
 }
