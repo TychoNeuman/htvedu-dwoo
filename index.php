@@ -15,6 +15,7 @@ const PAGES_BASE = "public/pages/";
 use App\Controller\UserController;
 use App\Controller\QuizController;
 use App\Authentication\Authentication;
+use App\Controller\ResultsController;
 
 $l_oDwoo = new Dwoo\Core();
 
@@ -29,6 +30,12 @@ if(!isset($_SESSION['username'])){
     if(isset($_GET['p'])){
         switch($_GET['p'])
         {
+
+            case 'test' :
+                $l_oResultsController = new ResultsController();
+                $l_oResultsController->gradeExam(12, 44);
+            break;
+            
             case 'login' :
                 echo $l_oDwoo->get(PAGES_BASE . 'login.tpl');
                 break;
@@ -46,8 +53,17 @@ if(!isset($_SESSION['username'])){
                 break;
             case 'userpage' :
                 $l_oUserController = new UserController();
+                $l_oResultsController = new ResultsController();
+
                 $l_aUser = array('user' => $l_oUserController->getUserProjector($_GET['id']));
-                echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aUser);
+                $l_aResults = $l_oResultsController->getAllQuizResultsSingleStudent($_GET['id']);
+
+                $l_aData = array(
+                    'user' => $l_aUser['user'],
+                    'results' => $l_aResults 
+                );
+
+                echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);
                 break;
             case 'useradd' :
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
@@ -102,6 +118,20 @@ if(!isset($_SESSION['username'])){
                     'index' => 1
                 );
                 echo $l_oDwoo->get(PAGES_BASE . 'quizpage.tpl', $l_aData);
+                break;
+            case 'results' :
+                $l_oResultsController = new ResultsController();
+                $l_aData = $l_oResultsController->getStatsPerStudent();
+                echo $l_oDwoo->get(PAGES_BASE . 'results.tpl', $l_aData);
+                break;
+            //TODO : This might get removed entirely
+            case 'results-per-student' :
+                $l_oResultsController = new ResultsController();
+                $l_aQuizResults = $l_oResultsController->getAllUsersThatMadeQuiz();
+                $l_aData = array(
+                    'resultinfo' => $l_aQuizResults
+                );
+                echo $l_oDwoo->get(PAGES_BASE . 'resultsstudentoverview.tpl', $l_aData);
                 break;
             case 'settings' :
                 echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl');

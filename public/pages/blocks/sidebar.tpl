@@ -42,7 +42,7 @@
 
     <!-- Nav Item - Results -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="index.php?p=results">
             <i class="fas fa-fw fa-chart-bar"></i>
             <span>Resultaten</span>
         </a>

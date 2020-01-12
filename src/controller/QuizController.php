@@ -8,7 +8,6 @@ use App\Database\HtvDb;
 use App\Model\Quiz\IQuiz;
 use App\Model\Quiz\NumberSeries;
 use App\Model\User;
-use App\System\Validator;
 
 class QuizController
 {
@@ -22,6 +21,33 @@ class QuizController
         $p_oQuiz->setQuestions($p_oQuiz->fetchQuestionsToArray());
 
         return $p_oQuiz;
+    }
+
+    public function _toArray(IQuiz $p_oQuiz) : array
+    {
+        $l_aQuizArray = array();
+
+        $l_aQuizArray['id'] = $p_oQuiz->getId();
+        $l_aQuizArray['name'] = $p_oQuiz->getName();
+        $l_aQuizArray['type'] = $p_oQuiz->getType();
+        $l_aQuizArray['time'] = $p_oQuiz->getTime();
+        $l_aQuizArray['score'] = $p_oQuiz->getScore();
+        $l_aQuizArray['questions'] = $p_oQuiz->getQuestions();
+
+        return $l_aQuizArray;
+    }
+
+    public function getQuizNameById(int $p_iId)
+    {
+        $l_oPreparedStatement = HtvDb::getInstance()
+            ->prepare("SELECT `name` FROM `quiz` WHERE `id` = : id");
+        $l_aBindings = array(
+            'id' => $p_iId
+        );
+        $l_oPreparedStatement->execute($l_aBindings);
+
+        return $l_oPreparedStatement->fetch();
+
     }
 
     public function determineQuizType(int $p_iQuizType) : string
@@ -168,6 +194,7 @@ class QuizController
             );
             $l_oPreparedStatement->execute($l_aBindings);
         }
-    }
 
+        header('Location: index.php?p=quiz');
+    }
 }
