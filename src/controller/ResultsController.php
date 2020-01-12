@@ -5,10 +5,27 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Database\HtvDb;
-use App\Controller\QuizController;
+use App\Model\Quiz\IQuiz;
 
 class ResultsController
 {
+    private function _hasPassed(iQuiz $p_oQuiz, int $p_iPercentage) : bool
+    {
+        $l_oSettingsController = new SettingsController();
+        $l_aPercentages = $l_oSettingsController->fetchPercentageSettings();
+
+        switch ($p_oQuiz->getType())
+        {
+            case 1 :
+                if($p_iPercentage >= $l_aPercentages[0]['percentage']){
+                    return true;
+                }else{
+                    return false;
+                }
+                break;
+        }
+    }
+
     public function getStatsPerStudent() : array
     {
         // Amount of people passed
@@ -36,8 +53,29 @@ class ResultsController
         return $l_aStatsArray;
     }
 
-    // TODO : This pretty much works, but the front-end needs to be adjusted
-    public function getAllUsersThatMadeQuiz() : array
+    public function fetchResultsSingleStudent(int $p_iId) : array
+    {
+        $l_oQuizController = new QuizController();
+
+        $l_oPreparedStatement = HtvDb::getInstance()
+            ->prepare('SELECT DISTINCT `quiz_id` FROM `quiz_submitted_answers` WHERE `user_id` = :id');
+        $l_aBindings = array(
+            'id' => $p_iId
+        );
+        $l_oPreparedStatement->execute($l_aBindings);
+        $l_aQuizIds = $l_oPreparedStatement->fetchAll();
+
+        $i = 0;
+        foreach ($l_aQuizIds as $l_iQuizId){
+            $l_aQuizInfo[$i] =  $l_oQuizController->_toArray($l_oQuizController->getQuiz((int)$l_iQuizId['quiz_id']));
+            $l_aQuizInfo[$i]['result'] = $this->gradeExam($p_iId, (int)$l_iQuizId['quiz_id']);
+            $i++;
+        }
+
+        return $l_aQuizInfo;
+    }
+
+    public function fetchResultsAllStudents() : array
     {
         $l_oUserController = new UserController();
         $l_oQuizController = new QuizController();
@@ -48,7 +86,6 @@ class ResultsController
         $l_oPreparedStatement->execute();
         $l_aUserIds = $l_oPreparedStatement->fetchAll();
 
-        $i = 0;
         //Then fetch all quizes assigned to that user
         foreach ($l_aUserIds as $l_iUserId){
             $l_oPreparedStatement = HtvDb::getInstance()
@@ -59,11 +96,19 @@ class ResultsController
             $l_oPreparedStatement->execute($l_aBindings);
             $l_aQuizIds = $l_oPreparedStatement->fetchAll();
 
-            $l_aQuizArray[$i]['user'] = $l_oUserController->getUserProjector((int)$l_iUserId['user_id']);
+            $i = 0;
             foreach ($l_aQuizIds as $l_iQuizId){
-                $l_aQuizArray[$i]['quiz'] = $l_oQuizController->_toArray($l_oQuizController->getQuiz((int)$l_iQuizId['quiz_id']));
+                $l_aQuizInfo[$i] =  $l_oQuizController->_toArray($l_oQuizController->getQuiz((int)$l_iQuizId['quiz_id']));
+                $l_aQuizInfo[$i]['result'] = $this->gradeExam((int)$l_iUserId['user_id'], (int)$l_iQuizId['quiz_id']);
+                $i++;
             }
-            $i++;
+
+            $l_aQuizArray[] = array(
+                'user' => $l_oUserController->getUserProjector((int)$l_iUserId['user_id']),
+                'quiz' => $l_aQuizInfo
+            );
+
+            unset($l_aQuizInfo);
         }
 
         return $l_aQuizArray;
@@ -111,28 +156,18 @@ class ResultsController
                         $l_iAmountOfIncorrectAnswers++;
                     }
                 }
+                break;
         }
 
-        $l_aResultsArray = array();
+        $l_iPercentage = $l_iResultScore/$l_iTotalScore * 100;
+        $l_bHasPassed = $this->_hasPassed($l_oQuiz, $l_iPercentage);
 
-        $l_aResultsArray['amountOfCorrectAnswers'] = $l_iAmountOfCorrectAnswers;
-        $l_aResultsArray['amountOfIncorrectAnswers'] = $l_iAmountOfIncorrectAnswers;
-        $l_aResultsArray['totalScore'] = $l_iTotalScore;
-        $l_aResultsArray['resultScore'] = $l_iResultScore;
-
-        return $l_aResultsArray;
-    }
-
-    public function getAllQuizResultsSingleStudent(int $p_iId)
-    {
-        $l_oPreparedStatement = HtvDb::getInstance()
-            ->prepare('SELECT * FROM `quiz_submitted_answers` WHERE `user_id` = :id');
-        $l_aBindings = array(
-            'id' => $p_iId
+        return array(
+            'amountOfCorrectAnswers' => $l_iAmountOfCorrectAnswers,
+            'amountOfIncorrectAnswers' => $l_iAmountOfIncorrectAnswers,
+            'totalScore' => $l_iTotalScore,
+            'resultScore' => $l_iResultScore,
+            'hasPassed' => $l_bHasPassed
         );
-        $l_oPreparedStatement->execute($l_aBindings);
-        $l_aResults = $l_oPreparedStatement->fetchAll();
-
-        return $l_aResults;
     }
 }

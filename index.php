@@ -16,6 +16,7 @@ use App\Controller\UserController;
 use App\Controller\QuizController;
 use App\Authentication\Authentication;
 use App\Controller\ResultsController;
+use App\Controller\SettingsController;
 
 $l_oDwoo = new Dwoo\Core();
 
@@ -30,12 +31,6 @@ if(!isset($_SESSION['username'])){
     if(isset($_GET['p'])){
         switch($_GET['p'])
         {
-
-            case 'test' :
-                $l_oResultsController = new ResultsController();
-                $l_oResultsController->gradeExam(12, 44);
-            break;
-            
             case 'login' :
                 echo $l_oDwoo->get(PAGES_BASE . 'login.tpl');
                 break;
@@ -56,11 +51,11 @@ if(!isset($_SESSION['username'])){
                 $l_oResultsController = new ResultsController();
 
                 $l_aUser = array('user' => $l_oUserController->getUserProjector($_GET['id']));
-                $l_aResults = $l_oResultsController->getAllQuizResultsSingleStudent($_GET['id']);
+                $l_aResults = $l_oResultsController->fetchResultsSingleStudent($_GET['id']);
 
                 $l_aData = array(
                     'user' => $l_aUser['user'],
-                    'results' => $l_aResults 
+                    'results' => $l_aResults
                 );
 
                 echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);
@@ -127,14 +122,23 @@ if(!isset($_SESSION['username'])){
             //TODO : This might get removed entirely
             case 'results-per-student' :
                 $l_oResultsController = new ResultsController();
-                $l_aQuizResults = $l_oResultsController->getAllUsersThatMadeQuiz();
+                $l_aQuizResults = $l_oResultsController->fetchResultsAllStudents();
                 $l_aData = array(
                     'resultinfo' => $l_aQuizResults
                 );
+
                 echo $l_oDwoo->get(PAGES_BASE . 'resultsstudentoverview.tpl', $l_aData);
                 break;
             case 'settings' :
-                echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl');
+                $l_oSettingsController = new SettingsController();
+
+                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                    $l_oSettingsController->postPercentageSettings($_POST);
+                }
+                $l_aData = array(
+                    'percentagesettings' => $l_oSettingsController->fetchPercentageSettings()
+                );
+                echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl', $l_aData);
                 break;
         }
     }else{
