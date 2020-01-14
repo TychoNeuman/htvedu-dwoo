@@ -12,11 +12,11 @@
             <div class="card-body">
                 <h4 class="small font-weight-bold">Toets Gemaakt <span class="float-right">{$amount_of_taken_quizes}</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: {$amount_of_taken_quizes}%" aria-valuenow="{$amount_of_taken_quizes}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: {$percentageMadeQuiz}%" aria-valuenow="{$amount_of_taken_quizes}" aria-valuemin="0" aria-valuemax="{$amount_of_taken_quizes + $amount_of_not_taken_quiz}"></div>
                 </div>
                 <h4 class="small font-weight-bold">Geen Toets Gemaakt<span class="float-right">{$amount_of_not_taken_quiz}</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: {$amount_of_not_taken_quiz}%" aria-valuenow="{$amount_of_not_taken_quiz}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {$percentageNotMadeQuiz}%" aria-valuenow="{$amount_of_not_taken_quiz}" aria-valuemin="0" aria-valuemax="{$amount_of_taken_quizes + $amount_of_not_taken_quiz}"></div>
                 </div>
             </div>
             <div class="card-header py-3">

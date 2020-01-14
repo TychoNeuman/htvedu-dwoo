@@ -92,7 +92,7 @@ class QuizController
         return $l_oQuiz;
     }
 
-    public function addQuizInfo(array $p_aPost)
+    public function addQuizInfo(array $p_aPost) : void
     {
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("INSERT INTO 
@@ -171,7 +171,7 @@ class QuizController
     }
 
 
-    public function submitQuizAnswers(iQuiz $p_oQuiz, array $p_aAnswers, User $p_oUser)
+    public function submitQuizAnswers(iQuiz $p_oQuiz, array $p_aAnswers, User $p_oUser) : void
     {
         $l_oHtvDb = HtvDb::getInstance();
 

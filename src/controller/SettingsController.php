@@ -26,6 +26,7 @@ class SettingsController
         return $l_aResult;
     }
 
+    //TODO: This should be refactored to a loop
     public function postPercentageSettings(array $p_aPost) : void
     {
         $l_oPreparedStatement = HtvDb::getInstance()

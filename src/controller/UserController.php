@@ -36,7 +36,7 @@ class UserController
         $l_aUserArray = array();
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare(
-                "SELECT * FROM `users`");
+                "SELECT * FROM `users` ORDER BY `role`");
         $l_oPreparedStatement->execute();
         $l_aResult = $l_oPreparedStatement->fetchAll();
 
@@ -71,6 +71,13 @@ class UserController
             'username' => $l_oUser->getUsername(),
             'firstname' => $l_oUser->getFirstName(),
             'lastname' => $l_oUser->getLastName(),
+            'dateOfBirth' => $l_oUser->getDateOfBirth(),
+            'address' => $l_oUser->getAddress(),
+            'postcode' => $l_oUser->getPostcode(),
+            'residence' => $l_oUser->getResidence(),
+            'phoneNumber' => $l_oUser->getPhoneNumber(),
+            'firstEmail' => $l_oUser->getEmail(),
+            'secondEmail' => $l_oUser->getSecondEmail(),
             'role' => $l_oUser->getRole()
         );
     }
@@ -93,7 +100,7 @@ class UserController
         return $l_aUserArray;
     }
 
-    public function addUser(array $p_aPost)
+    public function addUser(array $p_aPost) : void
     {
         $l_sHashedPassword = hash_hmac('sha256', $_POST['password'], HtvConfig::get('secretkey'));
 

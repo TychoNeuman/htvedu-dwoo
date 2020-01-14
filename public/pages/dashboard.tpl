@@ -288,4 +288,11 @@
       </div>
       <!-- End of Main Content -->
 
+  <!-- Page level plugins -->
+  <script src="/htvedu-dwoo/public/vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="/htvedu-dwoo/public/js/demo/chart-area-demo.js"></script>
+  <script src="/htvedu-dwoo/public/js/demo/chart-pie-demo.js"></script>
+
 {/block}

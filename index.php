@@ -5,7 +5,6 @@
  *  - Set header("Refresh: 0") on all pages that set post variables on the same page
  */
 
-
 session_start();
 
 require 'vendor/autoload.php';
@@ -116,7 +115,7 @@ if(!isset($_SESSION['username'])){
                 break;
             case 'results' :
                 $l_oResultsController = new ResultsController();
-                $l_aData = $l_oResultsController->getStatsPerStudent();
+                $l_aData = $l_oResultsController->getResultOverviewStudents();
                 echo $l_oDwoo->get(PAGES_BASE . 'results.tpl', $l_aData);
                 break;
             //TODO : This might get removed entirely
@@ -126,7 +125,6 @@ if(!isset($_SESSION['username'])){
                 $l_aData = array(
                     'resultinfo' => $l_aQuizResults
                 );
-
                 echo $l_oDwoo->get(PAGES_BASE . 'resultsstudentoverview.tpl', $l_aData);
                 break;
             case 'settings' :
@@ -139,6 +137,9 @@ if(!isset($_SESSION['username'])){
                     'percentagesettings' => $l_oSettingsController->fetchPercentageSettings()
                 );
                 echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl', $l_aData);
+                break;
+            case 'assessement' :
+                echo $l_oDwoo->get(PAGES_BASE . 'assessement.tpl');
                 break;
         }
     }else{

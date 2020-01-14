@@ -26,7 +26,7 @@ class ResultsController
         }
     }
 
-    public function getStatsPerStudent() : array
+    public function getResultOverviewStudents() : array
     {
         // Amount of people passed
         // Amount of people failed
@@ -38,22 +38,27 @@ class ResultsController
             ->prepare("SELECT DISTINCT(`user_id`)  FROM `quiz_submitted_answers`");
         $l_oAmountOfPeopleQuery->execute();
 
+        $l_iAmountOfPeopleTakenQuiz = $l_oAmountOfPeopleQuery->rowCount();
+
         // Amount of people not taken quiz
-        $l_oNotTakenQuizQuery = HtvDb::getInstance()
+        $l_oAllUsersQuery = HtvDb::getInstance()
             ->prepare("SELECT * FROM `users` WHERE `role` = 'Student'");
-        $l_oNotTakenQuizQuery->execute();
-        $l_iNotTakenQuiz = ($l_oNotTakenQuizQuery->rowCount() - $l_oAmountOfPeopleQuery->rowCount());
-        if($l_iNotTakenQuiz < 0){
-            $l_iNotTakenQuiz = 0;
+        $l_oAllUsersQuery->execute();
+
+        $l_iAmountOfPeopleNotTakenQuiz = $l_oAllUsersQuery->rowCount() - $l_iAmountOfPeopleTakenQuiz;
+        if($l_iAmountOfPeopleNotTakenQuiz < 0){
+            $l_iAmountOfPeopleNotTakenQuiz = 0;
         }
 
-        $l_aStatsArray['amount_of_taken_quizes'] = $l_oAmountOfPeopleQuery->rowCount();
-        $l_aStatsArray['amount_of_not_taken_quiz'] = $l_iNotTakenQuiz;
+        $l_aStatsArray['amount_of_taken_quizes'] = $l_iAmountOfPeopleTakenQuiz;
+        $l_aStatsArray['amount_of_not_taken_quiz'] = $l_iAmountOfPeopleNotTakenQuiz;
+        $l_aStatsArray['percentageMadeQuiz'] = $l_iAmountOfPeopleTakenQuiz/($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz) * 100;
+        $l_aStatsArray['percentageNotMadeQuiz'] = $l_iAmountOfPeopleNotTakenQuiz/($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz) * 100;
 
         return $l_aStatsArray;
     }
 
-    public function fetchResultsSingleStudent(int $p_iId) : array
+    public function fetchResultsSingleStudent(int $p_iId) : ?array
     {
         $l_oQuizController = new QuizController();
 
@@ -72,10 +77,14 @@ class ResultsController
             $i++;
         }
 
-        return $l_aQuizInfo;
+        if(!empty($l_aQuizInfo)){
+            return $l_aQuizInfo;
+        }else{
+            return null;
+        }
     }
 
-    public function fetchResultsAllStudents() : array
+    public function fetchResultsAllStudents() : ?array
     {
         $l_oUserController = new UserController();
         $l_oQuizController = new QuizController();
@@ -111,7 +120,11 @@ class ResultsController
             unset($l_aQuizInfo);
         }
 
-        return $l_aQuizArray;
+        if(!empty($l_aQuizArray)){
+            return $l_aQuizArray;
+        }else{
+            return null;
+        }
 
     }
 
@@ -167,6 +180,7 @@ class ResultsController
             'amountOfIncorrectAnswers' => $l_iAmountOfIncorrectAnswers,
             'totalScore' => $l_iTotalScore,
             'resultScore' => $l_iResultScore,
+            'resultPercentage' => $l_iPercentage,
             'hasPassed' => $l_bHasPassed
         );
     }

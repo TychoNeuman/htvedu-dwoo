@@ -48,11 +48,7 @@
     <!-- Custom scripts for all pages-->
     <script src="/htvedu-dwoo/public/js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="/htvedu-dwoo/public/vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="/htvedu-dwoo/public/js/demo/chart-area-demo.js"></script>
-    <script src="/htvedu-dwoo/public/js/demo/chart-pie-demo.js"></script>
+    <!-- Main script for custom functions -->
+    <script src="/htvedu-dwoo/public/js/main.js"></script>
 </body>
 </html>

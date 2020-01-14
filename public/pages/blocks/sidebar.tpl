@@ -64,7 +64,7 @@
 
     <!-- Nav Item - Measure -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="index.php?p=assessement">
             <i class="fas fa-fw fa-chart-pie"></i>
             <span>Beoordelen</span></a>
     </li>
