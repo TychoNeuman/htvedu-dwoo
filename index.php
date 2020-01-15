@@ -11,6 +11,7 @@ require 'vendor/autoload.php';
 
 const PAGES_BASE = "public/pages/";
 
+use App\Controller\AssessmentController;
 use App\Controller\UserController;
 use App\Controller\QuizController;
 use App\Authentication\Authentication;
@@ -125,6 +126,7 @@ if(!isset($_SESSION['username'])){
                 $l_aData = array(
                     'resultinfo' => $l_aQuizResults
                 );
+
                 echo $l_oDwoo->get(PAGES_BASE . 'resultsstudentoverview.tpl', $l_aData);
                 break;
             case 'settings' :
@@ -138,8 +140,19 @@ if(!isset($_SESSION['username'])){
                 );
                 echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl', $l_aData);
                 break;
-            case 'assessement' :
-                echo $l_oDwoo->get(PAGES_BASE . 'assessement.tpl');
+            case 'assessment' :
+                echo $l_oDwoo->get(PAGES_BASE . 'assessment.tpl');
+                break;
+            case 'assessment-users' :
+                $l_oAssessmentController = new AssessmentController();
+                $l_aUsers = $l_oAssessmentController->getAllNotAssessed('Sport');
+                $l_aData = array(
+                    'users' => $l_aUsers
+                );
+                echo $l_oDwoo->get(PAGES_BASE . 'assessment-users.tpl', $l_aData);
+                break;
+            case 'assessment-sport' :
+                echo $l_oDwoo->get(PAGES_BASE . 'assessment-sport.tpl');
                 break;
         }
     }else{

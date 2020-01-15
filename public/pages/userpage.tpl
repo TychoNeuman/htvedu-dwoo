@@ -46,7 +46,7 @@
                 <!-- Illustrations -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Uitslagen</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Toetsuitslagen</h6>
                     </div>
                     <div class="card-body">
                         {if empty($results)}
@@ -67,9 +67,9 @@
                                     <td>{$result.result.resultPercentage}%</td>
                                     <td>
                                         {if $result.result.hasPassed}
-                                            <span class="text-success">Gehaald</span>
+                                            <span class="text-success">Voldoende</span>
                                         {else}
-                                            <span class="text-danger">Niet gehaald</span>
+                                            <span class="text-danger">Onvoldoende</span>
                                         {/if}
                                     </td>
                                     <td><a href="index.php?p=userpage&id={$user.id}"><button type="button" class="btn btn-outline-primary btn-sm">Bekijk</button></a></td>
@@ -78,6 +78,15 @@
                                 </tbody>
                             </table>
                         {/if}
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Beoordelingen</h6>
+                    </div>
+                    <div class="card-body">
+                        <em>Geen bijlagen gevonden...</em>
                     </div>
                 </div>
 

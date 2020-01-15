@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Database\HtvDb;
 use App\Model\Quiz\IQuiz;
 use App\Model\Quiz\NumberSeries;
+use App\Model\Quiz\Wordpair;
 use App\Model\User;
 
 class QuizController
@@ -67,7 +68,7 @@ class QuizController
         return $l_oPreparedStatement->fetch()['quiz_type'];
     }
 
-    public function getQuiz(int $p_iQuizId) : IQuiz
+    public function getQuiz(int $p_iQuizId) : ?IQuiz
     {
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("SELECT 
@@ -87,9 +88,16 @@ class QuizController
             case '1' :
                 $l_oQuiz = self::_setQuiz(new NumberSeries(), $l_aResult);
                 break;
+            case '2' :
+                $l_oQuiz = self::_setQuiz(new Wordpair(), $l_aResult);
+                break;
         }
 
-        return $l_oQuiz;
+        if(isset($l_oQuiz)){
+            return $l_oQuiz;
+        }else{
+            return null;
+        }
     }
 
     public function addQuizInfo(array $p_aPost) : void
@@ -113,7 +121,6 @@ class QuizController
         header("Location: index.php?p=quizaddquestions&id=" . $l_iLastId);
     }
 
-    // TODO : Dont forget question score
     public function addQuizQuestions(IQuiz $l_oQuiz, array $l_aPost)
     {
         switch($l_oQuiz->getType())

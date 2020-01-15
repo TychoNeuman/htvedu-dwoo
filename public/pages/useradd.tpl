@@ -69,6 +69,7 @@
                             <select id="inputPermission" class="form-control" name="permission" required>
                                 <option value="" selected disabled>Kiezen...</option>
                                 <option value="Admin">Admin</option>
+                                <option value="Docent">Docent</option>
                                 <option value="Student">Student</option>
                             </select>
                         </div>
