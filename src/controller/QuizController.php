@@ -121,11 +121,11 @@ class QuizController
         header("Location: index.php?p=quizaddquestions&id=" . $l_iLastId);
     }
 
-    public function addQuizQuestions(IQuiz $l_oQuiz, array $l_aPost)
+    public function addQuizQuestions(IQuiz $l_oQuiz, array $l_aPost) : void
     {
         switch($l_oQuiz->getType())
         {
-            case '1' :
+            case 1 :
                 $l_oPreparedStatement = HtvDb::getInstance()
                     ->prepare("INSERT INTO 
                                                 `questions_numberseries` 
@@ -148,6 +148,31 @@ class QuizController
                     'incorrect_num2' => $l_aPost['incorrect_num2'],
                     'incorrect_num3' => $l_aPost['incorrect_num3'],
                     'answer' => $l_aPost['answer'],
+                    'score' => $l_aPost['score']
+                );
+                $l_oPreparedStatement->execute($l_aBindings);
+                break;
+            case 2 :
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare("INSERT INTO 
+                                                `questions_wordpair` 
+                                                (`quiz_id`, `answer1`, `answer2`, `word1`, `word2`,
+                                                `incorrect_answer1`, `incorrect_answer2`, `incorrect_answer3`, `incorrect_answer4`,
+                                                 `score`) 
+                                        VALUES 
+                                               (:quiz_id, :answer1, :answer2, :word1, :word2,
+                                                :incorrect_answer1, :incorrect_answer2, :incorrect_answer3, :incorrect_answer4,
+                                                :score)");
+                $l_aBindings = array(
+                    'quiz_id' => $l_oQuiz->getId(),
+                    'answer1' => $l_aPost['answer1'],
+                    'answer2' => $l_aPost['answer2'],
+                    'word1' => $l_aPost['word1'],
+                    'word2' => $l_aPost['word2'],
+                    'incorrect_answer1' => $l_aPost['incorrect_answer1-1'] . " " .$l_aPost['incorrect_answer1-2'],
+                    'incorrect_answer2' => $l_aPost['incorrect_answer2-1'] . " " . $l_aPost['incorrect_answer2-2'],
+                    'incorrect_answer3' => $l_aPost['incorrect_answer3-1'] . " " . $l_aPost['incorrect_answer3-2'],
+                    'incorrect_answer4' => $l_aPost['incorrect_answer4-1'] . " " . $l_aPost['incorrect_answer4-2'],
                     'score' => $l_aPost['score']
                 );
                 $l_oPreparedStatement->execute($l_aBindings);

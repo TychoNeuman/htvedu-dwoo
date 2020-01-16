@@ -26,7 +26,7 @@ class AssessmentController
         {
             case 'Sport' :
                 $l_oPreparedStatement = HtvDb::getInstance()
-                    ->prepare('SELECT `user_id` FROM `assessment-sport`');
+                    ->prepare('SELECT `user_id` FROM `assessment_sport`');
                 $l_oPreparedStatement->execute();
                 $l_aAssessedStudentArray = $l_oPreparedStatement->fetchAll();
                 break;

@@ -36,6 +36,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="index.php?p=users">Overzicht</a>
                 <a class="collapse-item" href="index.php?p=useradd">Toevoegen</a>
+                <a class="collapse-item" href="#">Importeren</a>
             </div>
         </div>
     </li>

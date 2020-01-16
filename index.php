@@ -81,6 +81,7 @@ if(!isset($_SESSION['username'])){
                 echo $l_oDwoo->get(PAGES_BASE . 'quizaddinfo.tpl');
                 break;
             case 'quizaddquestions' :
+                //TODO : Make all fields required for all quizes
                 $l_oQuizController = new QuizController();
                 $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
@@ -97,6 +98,7 @@ if(!isset($_SESSION['username'])){
                 echo $l_oDwoo->get(PAGES_BASE . 'quizaddquestions.tpl', $l_aData);
                 break;
             case 'quizpage' :
+                //TODO : Seriously, don't forget to shuffle the questions
                 $l_oQuizController = new QuizController();
                 $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
@@ -112,6 +114,7 @@ if(!isset($_SESSION['username'])){
                     'questions' => $l_oQuiz->getQuestions(),
                     'index' => 1
                 );
+
                 echo $l_oDwoo->get(PAGES_BASE . 'quizpage.tpl', $l_aData);
                 break;
             case 'results' :

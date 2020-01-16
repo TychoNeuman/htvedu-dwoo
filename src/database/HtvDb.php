@@ -8,6 +8,7 @@ use PDO;
 
 class HtvDb
 {
+    //TODO : Obviously move sensitive info to a config
     protected static $l_oConnection;
 
     //Let's get the Db using singleton pattern

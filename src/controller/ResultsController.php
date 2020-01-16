@@ -14,20 +14,28 @@ class ResultsController
         $l_oSettingsController = new SettingsController();
         $l_aPercentages = $l_oSettingsController->fetchPercentageSettings();
 
+        $l_bHasPassed = false;
+
         switch ($p_oQuiz->getType())
         {
             case 1 :
                 if($p_iPercentage >= $l_aPercentages[0]['percentage']){
-                    return true;
-                }else{
-                    return false;
+                    $l_bHasPassed = true;
+                }
+                break;
+            case 2 :
+                if($p_iPercentage >= $l_aPercentages[1]['percentage']){
+                    $l_bHasPassed = true;
                 }
                 break;
         }
+
+        return $l_bHasPassed;
     }
 
     public function getResultOverviewStudents() : array
     {
+        //TODO :
         // Amount of people passed
         // Amount of people failed
 
@@ -150,7 +158,7 @@ class ResultsController
 
         switch($l_oQuiz->getType())
         {
-            case '1' :
+            case 1 :
                 foreach($l_aResults as $l_aResult){
                     $l_oPreparedStatement = HtvDb::getInstance()
                         ->prepare("SELECT * FROM `questions_numberseries` WHERE `id` = :id");
@@ -168,6 +176,21 @@ class ResultsController
                     }else{
                         $l_iAmountOfIncorrectAnswers++;
                     }
+                }
+                break;
+            case 2 :
+                foreach($l_aResults as $l_aResult){
+                    $l_oPreparedStatement = HtvDb::getInstance()
+                        ->prepare("SELECT * FROM `questions_wordpair` WHERE `id` = :id");
+                    $l_aBindings = array(
+                        'id' => $l_aResult['question_id']
+                    );
+                    $l_oPreparedStatement->execute($l_aBindings);
+                    $l_sAnswers = $l_oPreparedStatement->fetch();
+
+                    $l_iTotalScore += $l_sAnswers['score'];
+
+                    //TODO: Finish this
                 }
                 break;
         }

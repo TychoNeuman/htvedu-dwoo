@@ -20,7 +20,7 @@
         {include 'quizpages/shownumberseries.tpl'}
     {/if}
     {if $type === 2}
-        <h1>Woordpaar</h1>
+        {include 'quizpages/showwordpair.tpl'}
     {/if}
 
 {/block}
