@@ -5,7 +5,14 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src"
+            "App\\": "src",
+            "App\\Controller\\" : "src/controller",
+            "App\\Model\\" : "src/model",
+            "App\\Model\\Quiz\\" : "src/model/quiz",
+            "App\\System\\" : "src/system",
+            "App\\Database\\" : "src/database",
+            "App\\Authentication\\" : "src/authentication",
+            "App\\Config\\" : "src/config"
         }
     }
 }

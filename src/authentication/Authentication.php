@@ -7,12 +7,14 @@ declare(strict_types=1);
 namespace App\Authentication;
 
 use App\Controller\UserController;
+require "src/database/HtvDb.php";
+
 use App\Database\HtvDb;
 use App\System\HtvConfig;
 
 class Authentication
 {
-    public function authenticate(array $p_aPost)
+    public function authenticate(array $p_aPost) : void
     {
         $l_sInsertedUsername = $p_aPost['username'];
         $l_sInsertedPassword = $p_aPost['password'];

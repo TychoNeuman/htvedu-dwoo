@@ -16,7 +16,7 @@ class HtvDb
     {
         if(!self::$l_oConnection){
             self::$l_oConnection = new PDO(
-                'mysql:host=localhost;dbname=htvedu-dwoo',
+                'mysql:host=localhost;dbname=meteoor_dwoo',
                 'root',
                 '');
             self::$l_oConnection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

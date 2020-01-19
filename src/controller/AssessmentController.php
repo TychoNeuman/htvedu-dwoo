@@ -11,6 +11,7 @@ class AssessmentController
     public function getAllNotAssessed(string $p_sSubject) : ?array
     {
         $l_oUserController = new UserController();
+        $l_aStudentArray = array();
 
         //First, fetch all the students
         $l_oPreparedStatement = HtvDb::getInstance()
@@ -24,15 +25,15 @@ class AssessmentController
 
         switch($p_sSubject)
         {
-            case 'Sport' :
+            case 'sport' :
                 $l_oPreparedStatement = HtvDb::getInstance()
                     ->prepare('SELECT `user_id` FROM `assessment_sport`');
                 $l_oPreparedStatement->execute();
                 $l_aAssessedStudentArray = $l_oPreparedStatement->fetchAll();
                 break;
-            case 'Assignment' :
+            case 'assignment' :
                 $l_oPreparedStatement = HtvDb::getInstance()
-                    ->prepare('SELECT `user_id` FROM `assessment-assignment`');
+                    ->prepare('SELECT `user_id` FROM `assessment_assignment`');
                 $l_oPreparedStatement->execute();
                 $l_aAssessedStudentArray = $l_oPreparedStatement->fetchAll();
                 break;
@@ -52,11 +53,50 @@ class AssessmentController
             }
         }
 
-        if(!empty($l_aStudentArray)){
-            return $l_aStudentArray;
-        }else{
-            return null;
+        return $l_aStudentArray;
+    }
+
+    public function postAssessmentResults(int $p_iUserId, string $p_sSubject, array $p_aPost) : void
+    {
+        switch($p_sSubject)
+        {
+            case 'sport' :
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare("INSERT INTO `assessment_sport` 
+                                (`user_id`, `km_time`, `km_grade`, `push_up_time`, `push_up_grade`, `sit_up_time`, `sit_up_grade`) 
+                                VALUES
+                                (:user_id, :km_time, :km_grade, :push_up_time, :push_up_grade, :sit_up_time, :sit_up_grade) ");
+                $l_aBindings = array(
+                    'user_id' => $p_iUserId,
+                    'km_time' => $p_aPost['km-time'],
+                    'km_grade' => $p_aPost['km-grade'],
+                    'push_up_time' => $p_aPost['push-up-time'],
+                    'push_up_grade' => $p_aPost['push-up-grade'],
+                    'sit_up_time' => $p_aPost['sit-up-time'],
+                    'sit_up_grade' => $p_aPost['sit-up-grade']
+                );
+                $l_oPreparedStatement->execute($l_aBindings);
+                break;
+            case 'assignment' :
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare("INSERT INTO `assessment_assignment`
+                            (`user_id`, `grade1`, `grade2`, `grade3`, `grade4`, `grade5`, `grade6`, `grade7`, `grade8`)
+                            VALUES
+                            (:user_id, :grade1, :grade2, :grade3, :grade4, :grade5, :grade6, :grade7, :grade8)");
+                $l_aBindings = array(
+                    'user_id' => $p_iUserId,
+                    'grade1' => $p_aPost['grade1'],
+                    'grade2' => $p_aPost['grade2'],
+                    'grade3' => $p_aPost['grade3'],
+                    'grade4' => $p_aPost['grade4'],
+                    'grade5' => $p_aPost['grade5'],
+                    'grade6' => $p_aPost['grade6'],
+                    'grade7' => $p_aPost['grade7'],
+                    'grade8' => $p_aPost['grade8'],
+                );
+                $l_oPreparedStatement->execute($l_aBindings);
         }
 
+        header('Location: index.php?p=assessment');
     }
 }

@@ -38,6 +38,7 @@ class ResultsController
         //TODO :
         // Amount of people passed
         // Amount of people failed
+        // Amount of people assessed/ not assessed (sport, assignment, group assignment)
 
         $l_aStatsArray = array();
 
@@ -60,15 +61,22 @@ class ResultsController
 
         $l_aStatsArray['amount_of_taken_quizes'] = $l_iAmountOfPeopleTakenQuiz;
         $l_aStatsArray['amount_of_not_taken_quiz'] = $l_iAmountOfPeopleNotTakenQuiz;
-        $l_aStatsArray['percentageMadeQuiz'] = $l_iAmountOfPeopleTakenQuiz/($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz) * 100;
-        $l_aStatsArray['percentageNotMadeQuiz'] = $l_iAmountOfPeopleNotTakenQuiz/($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz) * 100;
+
+        if($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz === 0){
+            $l_aStatsArray['percentageMadeQuiz'] = 0;
+            $l_aStatsArray['percentageNotMadeQuiz'] = 0;
+        }else{
+            $l_aStatsArray['percentageMadeQuiz'] = $l_iAmountOfPeopleTakenQuiz/($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz) * 100;
+            $l_aStatsArray['percentageNotMadeQuiz'] = $l_iAmountOfPeopleNotTakenQuiz/($l_iAmountOfPeopleTakenQuiz + $l_iAmountOfPeopleNotTakenQuiz) * 100;
+        }
 
         return $l_aStatsArray;
     }
 
-    public function fetchResultsSingleStudent(int $p_iId) : ?array
+    public function fetchResultsSingleStudent(int $p_iId) : array
     {
         $l_oQuizController = new QuizController();
+        $l_aQuizInfo = array();
 
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare('SELECT DISTINCT `quiz_id` FROM `quiz_submitted_answers` WHERE `user_id` = :id');
@@ -85,17 +93,14 @@ class ResultsController
             $i++;
         }
 
-        if(!empty($l_aQuizInfo)){
-            return $l_aQuizInfo;
-        }else{
-            return null;
-        }
+        return $l_aQuizInfo;
     }
 
-    public function fetchResultsAllStudents() : ?array
+    public function fetchResultsAllStudents() : array
     {
         $l_oUserController = new UserController();
         $l_oQuizController = new QuizController();
+        $l_aQuizArray = array();
 
         //Fetch id's from users that made quiz
         $l_oPreparedStatement = HtvDb::getInstance()
@@ -127,13 +132,7 @@ class ResultsController
 
             unset($l_aQuizInfo);
         }
-
-        if(!empty($l_aQuizArray)){
-            return $l_aQuizArray;
-        }else{
-            return null;
-        }
-
+        return $l_aQuizArray;
     }
 
     //Maybe move this to a grade controller

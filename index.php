@@ -1,5 +1,4 @@
 <?php
-
 /**
  * TODO :
  *  - Set header("Refresh: 0") on all pages that set post variables on the same page
@@ -20,17 +19,16 @@ use App\Controller\SettingsController;
 
 $l_oDwoo = new Dwoo\Core();
 
-if(!isset($_SESSION['username'])){
-    if($_SERVER['REQUEST_METHOD'] == "POST"){
+if (!isset($_SESSION['username'])) {
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $l_oAuthentication = new Authentication();
         $l_oAuthentication->authenticate($_POST);
-    }else{
+    } else {
         echo $l_oDwoo->get(PAGES_BASE . 'login.tpl');
     }
-}else{
-    if(isset($_GET['p'])){
-        switch($_GET['p'])
-        {
+} else {
+    if (isset($_GET['p'])) {
+        switch ($_GET['p']) {
             case 'login' :
                 echo $l_oDwoo->get(PAGES_BASE . 'login.tpl');
                 break;
@@ -44,7 +42,7 @@ if(!isset($_SESSION['username'])){
             case 'users' :
                 $l_oUserController = new UserController();
                 $l_aUsers = array('users' => $l_oUserController->getUsersOverviewProjector());
-                echo $l_oDwoo->get(PAGES_BASE .'usersoverview.tpl', $l_aUsers);
+                echo $l_oDwoo->get(PAGES_BASE . 'usersoverview.tpl', $l_aUsers);
                 break;
             case 'userpage' :
                 $l_oUserController = new UserController();
@@ -61,10 +59,10 @@ if(!isset($_SESSION['username'])){
                 echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);
                 break;
             case 'useradd' :
-                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $l_oUserController = new UserController();
                     $l_oUserController->addUser($_POST);
-                }else{
+                } else {
                     echo $l_oDwoo->get(PAGES_BASE . 'useradd.tpl');
                 }
                 break;
@@ -74,7 +72,7 @@ if(!isset($_SESSION['username'])){
                 echo $l_oDwoo->get(PAGES_BASE . 'quizoverview.tpl', $l_aData);
                 break;
             case 'quizaddinfo' :
-                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $l_oQuizController = new QuizController();
                     $l_oQuizController->addQuizInfo($_POST);
                 }
@@ -84,7 +82,7 @@ if(!isset($_SESSION['username'])){
                 //TODO : Make all fields required for all quizes
                 $l_oQuizController = new QuizController();
                 $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
-                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $l_oQuizController->addQuizQuestions($l_oQuiz, $_POST);
                 }
                 $l_aData = array(
@@ -101,7 +99,7 @@ if(!isset($_SESSION['username'])){
                 //TODO : Seriously, don't forget to shuffle the questions
                 $l_oQuizController = new QuizController();
                 $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
-                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $l_oUserController = new UserController();
                     $l_oQuizController->submitQuizAnswers($l_oQuiz, $_POST, $l_oUserController->getUser($_SESSION['id']));
                 }
@@ -135,7 +133,7 @@ if(!isset($_SESSION['username'])){
             case 'settings' :
                 $l_oSettingsController = new SettingsController();
 
-                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $l_oSettingsController->postPercentageSettings($_POST);
                 }
                 $l_aData = array(
@@ -147,18 +145,35 @@ if(!isset($_SESSION['username'])){
                 echo $l_oDwoo->get(PAGES_BASE . 'assessment.tpl');
                 break;
             case 'assessment-users' :
+                $l_sSubject = $_GET['subject'];
                 $l_oAssessmentController = new AssessmentController();
-                $l_aUsers = $l_oAssessmentController->getAllNotAssessed('Sport');
+                $l_aUsers = $l_oAssessmentController->getAllNotAssessed($l_sSubject);
                 $l_aData = array(
-                    'users' => $l_aUsers
+                    'users' => $l_aUsers,
+                    'subject' => $l_sSubject
                 );
                 echo $l_oDwoo->get(PAGES_BASE . 'assessment-users.tpl', $l_aData);
                 break;
-            case 'assessment-sport' :
-                echo $l_oDwoo->get(PAGES_BASE . 'assessment-sport.tpl');
+            case 'assessment-form' :
+                $l_sSubject = $_GET['subject'];
+                $l_iUserId = $_GET['id'];
+                $l_oUserController = new UserController();
+                $l_oAssessmentController = new AssessmentController();
+
+                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                    $l_oAssessmentController->postAssessmentResults((int)$l_iUserId, $l_sSubject, $_POST);
+                }
+
+                $l_aData = array(
+                    'subject' => $l_sSubject,
+                    'user' => $l_oUserController->getUserProjector($l_iUserId)
+                );
+
+
+                echo $l_oDwoo->get(PAGES_BASE . 'assessment-form.tpl', $l_aData);
                 break;
         }
-    }else{
-        echo $l_oDwoo->get(PAGES_BASE .'dashboard.tpl');
+    } else {
+        echo $l_oDwoo->get(PAGES_BASE . 'dashboard.tpl');
     }
 }

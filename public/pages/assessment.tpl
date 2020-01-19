@@ -24,7 +24,7 @@
             </div>
             <!-- Card Body -->
             <div class="card-body">
-                <button class="btn btn-primary">Beoordelen</button>
+                <a href="index.php?p=assessment-users&subject=assignment"><button type="button" class="btn btn-outline-primary btn-sm">Beoordelen</button></a>
             </div>
         </div>
     </div>
