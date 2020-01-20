@@ -16,11 +16,14 @@
                 </div>
             </div>
         </div>
-    {if $type === 1}
-        {include "quizpages/addnumberseries.tpl"}
-    {/if}
-    {if $type === 2}
-        {include "quizpages/addwordpair.tpl"}
-    {/if}
+        {if $type === 1}
+            {include "quizpages/addnumberseries.tpl"}
+        {/if}
+        {if $type === 2}
+            {include "quizpages/addwordpair.tpl"}
+        {/if}
+        {if $type === 3}
+            {include "quizpages/addletterpair.tpl"}
+        {/if}
     </div>
 {/block}

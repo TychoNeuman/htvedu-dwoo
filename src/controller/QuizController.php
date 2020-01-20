@@ -177,6 +177,35 @@ class QuizController
                 );
                 $l_oPreparedStatement->execute($l_aBindings);
                 break;
+            case 3 :
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare("INSERT INTO 
+                                                `questions_letterpair` 
+                                                (`quiz_id`, `pair1a`, `pair1b`, `pair2a`, `pair2b`, `pair3a`, `pair3b`,
+                                                `answer1`, `answer2`, `incorrect_answer1`, `incorrect_answer2`, `incorrect_answer3`, `incorrect_answer4`,
+                                                 `score`) 
+                                        VALUES 
+                                               (:quiz_id, :pair1a, :pair1b, :pair2a, :pair2b, :pair3a, :pair3b, 
+                                                :answer1, :answer2, :incorrect_answer1, :incorrect_answer2, :incorrect_answer3, :incorrect_answer4,
+                                                :score)");
+                $l_aBindings = array(
+                    'quiz_id' => $l_oQuiz->getId(),
+                    'pair1a' => $l_aPost['pair1a'],
+                    'pair1b' => $l_aPost['pair1b'],
+                    'pair2a' => $l_aPost['pair2a'],
+                    'pair2b' => $l_aPost['pair2b'],
+                    'pair3a' => $l_aPost['pair3a'],
+                    'pair3b' => $l_aPost['pair3b'],
+                    'answer1' => $l_aPost['answer1'],
+                    'answer2' => $l_aPost['answer2'],
+                    'incorrect_answer1' => $l_aPost['incorrect-answer1'],
+                    'incorrect_answer2' => $l_aPost['incorrect-answer2'],
+                    'incorrect_answer3' => $l_aPost['incorrect-answer3'],
+                    'incorrect_answer4' => $l_aPost['incorrect-answer4'],
+                    'score' => $l_aPost['score']
+                );
+                $l_oPreparedStatement->execute($l_aBindings);
+                break;
         }
 
         header("Refresh: 0");

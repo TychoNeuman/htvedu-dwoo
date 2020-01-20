@@ -24,7 +24,7 @@
                                 <span>Juist beantwoord: <span class="font-weight-bold">{$quiz.result.amountOfCorrectAnswers}/{$quiz.result.amountOfCorrectAnswers + $quiz.result.amountOfIncorrectAnswers}</span></span>
                                 <span>Score: <span class="font-weight-bold">{$quiz.result.resultScore}/{$quiz.result.totalScore}</span></span>
                                 <span>Percentage: <span class="font-weight-bold">{$quiz.result.resultPercentage}%</span></span>
-                                <span>Uitslag: <span class="font-weight-bold">{if $quiz.result.hasPassed}<span class="text-success">Voldoende</span>{else}<span class="text-danger">Onvoldoende</span>{/if}</span></span>
+                                <span>Uitslag: <span class="font-weight-bold">{$quiz.result.hasPassed}</span>
                             </div>
                         {/foreach}
                         </div>

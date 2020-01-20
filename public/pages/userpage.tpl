@@ -66,11 +66,7 @@
                                     <td>{$result.result.amountOfCorrectAnswers}/{$result.result.amountOfCorrectAnswers + $result.result.amountOfIncorrectAnswers}</td>
                                     <td>{$result.result.resultPercentage}%</td>
                                     <td>
-                                        {if $result.result.hasPassed}
-                                            <span class="text-success">Voldoende</span>
-                                        {else}
-                                            <span class="text-danger">Onvoldoende</span>
-                                        {/if}
+                                        {$result.result.hasPassed}
                                     </td>
                                     <td><a href="index.php?p=userpage&id={$user.id}"><button type="button" class="btn btn-outline-primary btn-sm">Bekijk</button></a></td>
                                 </tr>

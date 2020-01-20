@@ -9,28 +9,48 @@ use App\Model\Quiz\IQuiz;
 
 class ResultsController
 {
-    private function _hasPassed(iQuiz $p_oQuiz, int $p_iPercentage) : bool
+    const INADEQUATE = "Onvoldoende";
+    const SUFFICIENT = "Voldoende";
+    const EXCELLENT = "Goed";
+
+    private function _hasPassed(iQuiz $p_oQuiz, int $p_iPercentage) : string
     {
         $l_oSettingsController = new SettingsController();
         $l_aPercentages = $l_oSettingsController->fetchPercentageSettings();
-
-        $l_bHasPassed = false;
+        $l_sResult = "";
 
         switch ($p_oQuiz->getType())
         {
             case 1 :
-                if($p_iPercentage >= $l_aPercentages[0]['percentage']){
-                    $l_bHasPassed = true;
+                if($p_iPercentage < $l_aPercentages[0]['percentage_low']){
+                    $l_sResult = self::INADEQUATE;
+                }else if($p_iPercentage >= $l_aPercentages[0]['percentage_low'] && $p_iPercentage < $p_iPercentage[0]['percentage_high']){
+                    $l_sResult = self::SUFFICIENT;
+                }else{
+                    $l_sResult = self::EXCELLENT;
                 }
                 break;
             case 2 :
-                if($p_iPercentage >= $l_aPercentages[1]['percentage']){
-                    $l_bHasPassed = true;
+                if($p_iPercentage < $l_aPercentages[1]['percentage_low']){
+                    $l_sResult = self::INADEQUATE;
+                }else if($p_iPercentage >= $l_aPercentages[1]['percentage_low'] && $p_iPercentage < $p_iPercentage[1]['percentage_high']){
+                    $l_sResult = self::SUFFICIENT;
+                }else{
+                    $l_sResult = self::EXCELLENT;
+                }
+                break;
+            case 3 :
+                if($p_iPercentage < $l_aPercentages[2]['percentage_low']){
+                    $l_sResult = self::INADEQUATE;
+                }else if($p_iPercentage >= $l_aPercentages[2]['percentage_low'] && $p_iPercentage < $p_iPercentage[2]['percentage_high']){
+                    $l_sResult = self::SUFFICIENT;
+                }else{
+                    $l_sResult = self::EXCELLENT;
                 }
                 break;
         }
 
-        return $l_bHasPassed;
+        return $l_sResult;
     }
 
     public function getResultOverviewStudents() : array
@@ -204,7 +224,7 @@ class ResultsController
         }
 
         $l_iPercentage = $l_iResultScore/$l_iTotalScore * 100;
-        $l_bHasPassed = $this->_hasPassed($l_oQuiz, $l_iPercentage);
+        $l_sResult = $this->_hasPassed($l_oQuiz, $l_iPercentage);
 
         return array(
             'amountOfCorrectAnswers' => $l_iAmountOfCorrectAnswers,
@@ -212,7 +232,7 @@ class ResultsController
             'totalScore' => $l_iTotalScore,
             'resultScore' => $l_iResultScore,
             'resultPercentage' => $l_iPercentage,
-            'hasPassed' => $l_bHasPassed
+            'hasPassed' => $l_sResult
         );
     }
 }

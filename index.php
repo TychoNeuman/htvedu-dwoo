@@ -139,6 +139,7 @@ if (!isset($_SESSION['username'])) {
                 $l_aData = array(
                     'percentagesettings' => $l_oSettingsController->fetchPercentageSettings()
                 );
+
                 echo $l_oDwoo->get(PAGES_BASE . 'settings.tpl', $l_aData);
                 break;
             case 'assessment' :
