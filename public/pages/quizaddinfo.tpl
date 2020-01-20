@@ -22,6 +22,7 @@
                                 <option selected>Soort toets:...</option>
                                 <option value="1">Cijferreeks</option>
                                 <option value="2">Woordpaar</option>
+                                <option value="3">Letterpaar</option>
                             </select>
                         </div>
                     </div>

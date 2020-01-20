@@ -101,6 +101,7 @@ class ResultsController
         $l_oUserController = new UserController();
         $l_oQuizController = new QuizController();
         $l_aQuizArray = array();
+        $l_aQuizInfo= array();
 
         //Fetch id's from users that made quiz
         $l_oPreparedStatement = HtvDb::getInstance()
@@ -187,9 +188,17 @@ class ResultsController
                     $l_oPreparedStatement->execute($l_aBindings);
                     $l_sAnswers = $l_oPreparedStatement->fetch();
 
+                    $l_sAnswer = $l_sAnswers['word1'] . " " . $l_sAnswers['word2'];
+
                     $l_iTotalScore += $l_sAnswers['score'];
 
-                    //TODO: Finish this
+                    if($l_aResult['answer'] === $l_sAnswer){
+                        $l_iAmountOfCorrectAnswers++;
+                        $l_iResultScore += $l_sAnswers['score'];
+                    }else{
+                        $l_iAmountOfIncorrectAnswers++;
+                    }
+
                 }
                 break;
         }

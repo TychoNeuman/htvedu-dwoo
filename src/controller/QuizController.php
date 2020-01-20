@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Database\HtvDb;
 use App\Model\Quiz\IQuiz;
+use App\Model\Quiz\Letterpair;
 use App\Model\Quiz\NumberSeries;
 use App\Model\Quiz\Wordpair;
 use App\Model\User;
@@ -38,7 +39,7 @@ class QuizController
         return $l_aQuizArray;
     }
 
-    public function getQuizNameById(int $p_iId)
+    public function getQuizNameById(int $p_iId) : string
     {
         $l_oPreparedStatement = HtvDb::getInstance()
             ->prepare("SELECT `name` FROM `quiz` WHERE `id` = : id");
@@ -85,19 +86,18 @@ class QuizController
 
         switch($l_aResult['type'])
         {
-            case '1' :
+            case 1 :
                 $l_oQuiz = self::_setQuiz(new NumberSeries(), $l_aResult);
                 break;
-            case '2' :
+            case 2 :
                 $l_oQuiz = self::_setQuiz(new Wordpair(), $l_aResult);
+                break;
+            case 3 :
+                $l_oQuiz = self::_setQuiz(new Letterpair(), $l_aResult);
                 break;
         }
 
-        if(isset($l_oQuiz)){
-            return $l_oQuiz;
-        }else{
-            return null;
-        }
+        return $l_oQuiz;
     }
 
     public function addQuizInfo(array $p_aPost) : void

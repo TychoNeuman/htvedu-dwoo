@@ -8,4 +8,7 @@
    {if $subject === 'assignment'}
       {include "assessmentpages/assignmentform.tpl"}
    {/if}
+   {if $subject === 'group'}
+      {include "assessmentpages/groupform.tpl"}
+   {/if}
 {/block}

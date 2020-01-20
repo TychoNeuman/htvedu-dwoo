@@ -8,7 +8,7 @@ use App\Database\HtvDb;
 
 class AssessmentController
 {
-    public function getAllNotAssessed(string $p_sSubject) : ?array
+    public function getAllNotAssessed(string $p_sSubject) : array
     {
         $l_oUserController = new UserController();
         $l_aStudentArray = array();
@@ -37,9 +37,15 @@ class AssessmentController
                 $l_oPreparedStatement->execute();
                 $l_aAssessedStudentArray = $l_oPreparedStatement->fetchAll();
                 break;
+            case 'group' :
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare('SELECT `user_id` FROM `assessment_group`');
+                $l_oPreparedStatement->execute();
+                $l_aAssessedStudentArray = $l_oPreparedStatement->fetchAll();
+                break;
         }
 
-        //If empty, this means that no students has been assessed yet, so we can safely return all of them
+        //If empty, this means that no students have been assessed yet, so we can safely return all of them
         if(empty($l_aAssessedStudentArray)){
             return $l_aStudentArray;
         }
@@ -95,6 +101,22 @@ class AssessmentController
                     'grade8' => $p_aPost['grade8'],
                 );
                 $l_oPreparedStatement->execute($l_aBindings);
+                break;
+            case 'group' :
+                $l_oPreparedStatement = HtvDb::getInstance()
+                    ->prepare("INSERT INTO `assessment_group`
+                            (`user_id`, `grade1`, `grade2`, `grade3`, `grade4`)
+                            VALUES
+                            (:user_id, :grade1, :grade2, :grade3, :grade4)");
+                $l_aBindings = array(
+                    'user_id' => $p_iUserId,
+                    'grade1' => $p_aPost['grade1'],
+                    'grade2' => $p_aPost['grade2'],
+                    'grade3' => $p_aPost['grade3'],
+                    'grade4' => $p_aPost['grade4']
+                );
+                $l_oPreparedStatement->execute($l_aBindings);
+                break;
         }
 
         header('Location: index.php?p=assessment');
