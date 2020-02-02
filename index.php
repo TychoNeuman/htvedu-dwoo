@@ -47,13 +47,21 @@ if (!isset($_SESSION['username'])) {
             case 'userpage' :
                 $l_oUserController = new UserController();
                 $l_oResultsController = new ResultsController();
+                $l_oAssessmentController = new AssessmentController();
 
                 $l_aUser = array('user' => $l_oUserController->getUserProjector($_GET['id']));
                 $l_aResults = $l_oResultsController->fetchResultsSingleStudent($_GET['id']);
 
+                $l_aAssignmentResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::ASSIGNMENT);
+                $l_aGroupResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::GROUP);
+                $l_aSportResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::SPORT);
+
                 $l_aData = array(
                     'user' => $l_aUser['user'],
-                    'results' => $l_aResults
+                    'results' => $l_aResults,
+                    'assignment' => $l_aAssignmentResult,
+                    'group' => $l_aGroupResult,
+                    'sport' => $l_aSportResult
                 );
 
                 echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);
@@ -170,9 +178,20 @@ if (!isset($_SESSION['username'])) {
                     'user' => $l_oUserController->getUserProjector($l_iUserId)
                 );
 
-
                 echo $l_oDwoo->get(PAGES_BASE . 'assessment-form.tpl', $l_aData);
                 break;
+            case 'quizresults' :
+                $l_iUserId = $_GET['user'];
+                $l_iQuizId = $_GET['id'];
+
+                $l_oQuizController = new QuizController();
+                $l_oQuiz = $l_oQuizController->getQuiz($l_iQuizId);
+                $l_oResultsController = new ResultsController();
+                $l_aData = array(
+                    'quizresults' =>$l_oResultsController->fetchQuizResults($l_oQuiz, $l_iUserId)
+                );
+
+                echo $l_oDwoo->get(PAGES_BASE . 'quizresults.tpl', $l_aData);
         }
     } else {
         echo $l_oDwoo->get(PAGES_BASE . 'dashboard.tpl');

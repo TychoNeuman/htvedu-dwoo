@@ -6,6 +6,10 @@ namespace App\Model\Quiz;
 
 interface IQuiz
 {
+    const NUMBERSERIES = 1;
+    const WORDPAIR = 2;
+    const LETTERPAIR = 3;
+
     public function setId(int $p_iId);
     public function getId() : int;
     public function setName(string $p_sName);

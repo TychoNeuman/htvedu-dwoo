@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Database\HtvDb;
+use App\Model\User;
 
 class AssessmentController
 {
+    const ASSIGNMENT = "assessment_assignment";
+    const GROUP = "assessment_group";
+    const SPORT = "assessment_sport";
+
     public function getAllNotAssessed(string $p_sSubject) : array
     {
         $l_oUserController = new UserController();
@@ -60,6 +65,14 @@ class AssessmentController
         }
 
         return $l_aStudentArray;
+    }
+
+    public function getAllResultsSingleStudents(int $p_iUserId, string $p_iAssessmentType) : array
+    {
+        $l_oPreparedStatement =  HtvDb::getInstance()
+            ->prepare("SELECT * FROM " . "`" . $p_iAssessmentType . "`" . "WHERE `user_id` = " . $p_iUserId);
+        $l_oPreparedStatement->execute();
+        return $l_oPreparedStatement->fetchAll();
     }
 
     public function postAssessmentResults(int $p_iUserId, string $p_sSubject, array $p_aPost) : void

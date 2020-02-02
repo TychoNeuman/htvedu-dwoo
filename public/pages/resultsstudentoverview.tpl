@@ -16,7 +16,7 @@
                 {foreach $resultinfo as result}
                 <div class="border">
                     <div class="d-flex flex-column">
-                        <div class="p-2 border"><span class="font-weight-bold">{$result.user.username} {$result.user.firstname} {$result.user.lastname}</span></div>
+                        <div class="p-2 border">{$result.user.username}<span class="font-weight-bold"> {$result.user.firstname} {$result.user.lastname}</span></div>
                         <div class="d-flex flex-row">
                         {foreach $result.quiz as quiz}
                             <div class="p-2 border d-flex flex-column">

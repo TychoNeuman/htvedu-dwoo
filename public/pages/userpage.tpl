@@ -68,7 +68,7 @@
                                     <td>
                                         {$result.result.hasPassed}
                                     </td>
-                                    <td><a href="index.php?p=userpage&id={$user.id}"><button type="button" class="btn btn-outline-primary btn-sm">Bekijk</button></a></td>
+                                    <td><a href="index.php?p=quizresults&id={$result.id}&user={$user.id}"><button type="button" class="btn btn-outline-primary btn-sm">Bekijk</button></a></td>
                                 </tr>
                             {/foreach}
                                 </tbody>
@@ -82,7 +82,11 @@
                         <h6 class="m-0 font-weight-bold text-primary">Beoordelingen</h6>
                     </div>
                     <div class="card-body">
-                        <em>Geen bijlagen gevonden...</em>
+                        {if empty($assignment) && empty($group) && empty($sport)}
+                            <em>Nog niet beoordeeld...</em>
+                        {else}
+
+                        {/if}
                     </div>
                 </div>
 
