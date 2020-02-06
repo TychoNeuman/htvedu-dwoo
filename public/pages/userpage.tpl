@@ -73,6 +73,8 @@
                             {/foreach}
                                 </tbody>
                             </table>
+                            <hr>
+                            <p class="font-weight-bold">Uitslag: {$totalresult} </p>
                         {/if}
                     </div>
                 </div>

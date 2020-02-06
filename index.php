@@ -59,9 +59,10 @@ if (!isset($_SESSION['username'])) {
                 $l_aData = array(
                     'user' => $l_aUser['user'],
                     'results' => $l_aResults,
-                    'assignment' => $l_aAssignmentResult,
-                    'group' => $l_aGroupResult,
-                    'sport' => $l_aSportResult
+                    'totalresult' => $l_oResultsController->fetchFinalResultQuiz($l_aResults),
+                    'assignment' => empty($l_aAssignmentResult) ? $l_aAssignmentResult : $l_oAssessmentController->calculateFinalResultAssignment($l_aAssignmentResult[0]),
+                    'group' => empty($l_aGroupResult) ? $l_aGroupResult : $l_oAssessmentController->calculateFinalResultGroup($l_aGroupResult[0]),
+                    'sport' => empty($l_aSportResult) ? $l_aSportResult : $l_oAssessmentController->calculateFinalResultSport($l_aSportResult[0]),
                 );
 
                 echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);

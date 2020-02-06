@@ -58,7 +58,11 @@
         <div id="collapsePagesQuiz" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="index.php?p=quiz">Bekijken</a>
-                <a class="collapse-item" href="index.php?p=quizaddinfo&step=1">Toevoegen</a>
+                <?php
+                if( $_SESSION['role'] === "Admin"){
+                    echo '<a class="collapse-item" href="index.php?p=quizaddinfo&step=1">Toevoegen</a>';
+                }
+                ?>
             </div>
         </div>
     </li>

@@ -163,7 +163,7 @@ class ResultsController
         return $l_aQuizArray;
     }
 
-    //TODO : The check for wordpair or letterpair could be written a bit more effecient
+    //TODO : The check for wordpair or letterpair could be written a bit more effeciently
     public function fetchQuizResults(iQuiz $p_oQuiz, int $p_iUserId) : array
     {
         $l_aCompareAnswersArray = array();
@@ -177,7 +177,7 @@ class ResultsController
                 if($p_oQuiz->getType() !== iQuiz::WORDPAIR && $p_oQuiz->getType() !== iQuiz::LETTERPAIR){
                     if($p_oQuiz->getQuestions()[$i]['id'] === $l_aSubmittedAnswer['question_id']){
                         $l_aCompareAnswersArray[$i] = array(
-                            'question_id' => $p_oQuiz->getQuestions()[$i]['id'] ,
+                            'question_id' => $p_oQuiz->getQuestions()[$i]['id'],
                             'correct_answer' => $p_oQuiz->getQuestions()[$i]['answer'],
                             'submitted_answer' => $l_aSubmittedAnswer['answer'],
                             'is_correct' => $p_oQuiz->getQuestions()[$i]['answer'] === $l_aSubmittedAnswer['answer'] ? true : false
@@ -213,6 +213,26 @@ class ResultsController
         }
 
         return $l_aCompareAnswersArray;
+    }
+
+    public function fetchFinalResultQuiz(array $p_aQuizResults)
+    {
+        $l_iInadequate = 0;
+        $l_iSufficient = 0;
+        $l_iExcellent = 0;
+        $l_iTotalQuizes = count($p_aQuizResults);
+
+        foreach($p_aQuizResults as $l_aQuizResult){
+            if($l_aQuizResult['result']['hasPassed'] === self::INADEQUATE){
+                $l_iInadequate++;
+            }elseif( $l_aQuizResult['result']['hasPassed'] === self::SUFFICIENT){
+                $l_iSufficient++;
+            }elseif( $l_aQuizResult['result']['hasPassed'] === self::EXCELLENT){
+                $l_iExcellent++;
+            }
+        }
+
+        return self::EXCELLENT;
     }
 
     //Maybe move this to a grade controller

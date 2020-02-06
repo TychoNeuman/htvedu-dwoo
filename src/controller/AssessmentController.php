@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Database\HtvDb;
-use App\Model\User;
 
 class AssessmentController
 {
@@ -133,5 +132,51 @@ class AssessmentController
         }
 
         header('Location: index.php?p=assessment');
+    }
+
+    public function calculateFinalResultSport(array $p_aSportResults) : float
+    {
+        $l_iGradeA = $p_aSportResults['km_grade'];
+        $l_iGradeB = round(($p_aSportResults['push_up_time'] + $p_aSportResults['sit_up_grade']) / 2, 0);
+
+        return round(($l_iGradeA + $l_iGradeB) / 2, 0);
+    }
+
+    public function calculateFinalResultGroup(array $p_aGroupResults) : string
+    {
+        $l_iInadequate = 0;
+        $l_iSufficient = 0;
+        $l_iExcellent = 0;
+
+        //Remove the first and second item from the array (id and user id)
+        array_shift($p_aGroupResults);
+        array_shift($p_aGroupResults);
+
+        foreach($p_aGroupResults as $l_sKey=>$l_sValue){
+            if($l_sValue === 1){
+                $l_iInadequate++;
+            }else if($l_sValue === 2){
+                $l_iSufficient++;
+            }else{
+                $l_iExcellent++;
+            }
+        }
+
+        if($l_iExcellent >= 3 && $l_iInadequate === 0){
+            return ResultsController::EXCELLENT;
+        }else if($l_iSufficient >= 3){
+            return ResultsController::SUFFICIENT;
+        }else{
+            return ResultsController::INADEQUATE;
+        }
+    }
+
+    public function calculateFinalResultAssignment(array $p_aAssignmentResults) : int
+    {
+        //Again, remove the first and second item from the array (id and user id)
+        array_shift($p_aAssignmentResults);
+        array_shift($p_aAssignmentResults);
+
+        return array_sum($p_aAssignmentResults);
     }
 }
