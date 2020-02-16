@@ -175,35 +175,35 @@ class ResultsController
         for($i = 0; $i < count($p_oQuiz->getQuestions()); $i++){
             foreach($l_aSubmittedAnswers as $l_aSubmittedAnswer){
                 if($p_oQuiz->getType() !== iQuiz::WORDPAIR && $p_oQuiz->getType() !== iQuiz::LETTERPAIR){
-                    if($p_oQuiz->getQuestions()[$i]['id'] === $l_aSubmittedAnswer['question_id']){
+                    if($p_oQuiz->getQuestions()[$i]['quizInfo']['id'] === $l_aSubmittedAnswer['question_id']){
                         $l_aCompareAnswersArray[$i] = array(
-                            'question_id' => $p_oQuiz->getQuestions()[$i]['id'],
-                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['answer'],
+                            'question_id' => $p_oQuiz->getQuestions()[$i]['quizInfo']['id'],
+                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['quizInfo']['answer'],
                             'submitted_answer' => $l_aSubmittedAnswer['answer'],
-                            'is_correct' => $p_oQuiz->getQuestions()[$i]['answer'] === $l_aSubmittedAnswer['answer'] ? true : false
+                            'is_correct' => $p_oQuiz->getQuestions()[$i]['quizInfo']['answer'] === $l_aSubmittedAnswer['answer'] ? true : false
                         );
                         continue 2;
                     }else{
                         $l_aCompareAnswersArray[$i] = array(
-                            'question_id' => $p_oQuiz->getQuestions()[$i]['id'] ,
-                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['answer'],
+                            'question_id' => $p_oQuiz->getQuestions()[$i]['quizInfo']['id'] ,
+                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['quizInfo']['answer'],
                             'submitted_answer' => "Niet ingevuld",
                             'is_correct' => false
                         );
                     }
                 }else{
-                    if($p_oQuiz->getQuestions()[$i]['id'] === $l_aSubmittedAnswer['question_id']){
+                    if($p_oQuiz->getQuestions()[$i]['quizInfo']['id'] === $l_aSubmittedAnswer['question_id']){
                         $l_aCompareAnswersArray[$i] = array(
-                            'question_id' => $p_oQuiz->getQuestions()[$i]['id'],
-                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['answer1'] . " " . $p_oQuiz->getQuestions()[$i]['answer2'],
+                            'question_id' => $p_oQuiz->getQuestions()[$i]['quizInfo']['id'],
+                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['quizInfo']['answer1'] . " " . $p_oQuiz->getQuestions()[$i]['quizInfo']['answer2'],
                             'submitted_answer' => $l_aSubmittedAnswer['answer'],
-                            'is_correct' => $p_oQuiz->getQuestions()[$i]['answer1'] . " " . $p_oQuiz->getQuestions()[$i]['answer2'] === $l_aSubmittedAnswer['answer'] ? true : false
+                            'is_correct' => $p_oQuiz->getQuestions()[$i]['quizInfo']['answer1'] . " " . $p_oQuiz->getQuestions()[$i]['quizInfo']['answer2'] === $l_aSubmittedAnswer['answer'] ? true : false
                         );
                         continue 2;
                     }else{
                         $l_aCompareAnswersArray[$i] = array(
-                            'question_id' => $p_oQuiz->getQuestions()[$i]['id'] ,
-                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['answer1'] . " " . $p_oQuiz->getQuestions()[$i]['answer2'],
+                            'question_id' => $p_oQuiz->getQuestions()[$i]['quizInfo']['id'] ,
+                            'correct_answer' => $p_oQuiz->getQuestions()[$i]['quizInfo']['answer1'] . " " . $p_oQuiz->getQuestions()[$i]['quizInfo']['answer2'],
                             'submitted_answer' => "Niet ingevuld",
                             'is_correct' => false
                         );
@@ -252,28 +252,32 @@ class ResultsController
 
         $l_iTotalAmountOfQuestions = count($l_oQuiz->getQuestions());
         foreach($l_oQuiz->getQuestions() as $l_aQuestion){
-            $l_iTotalScore += $l_aQuestion['score'];
+            $l_iTotalScore += $l_aQuestion['quizInfo']['score'];
         }
 
         foreach($l_aResults as $l_aResult){
             foreach($l_oQuiz->getQuestions() as $l_aQuestion){
                 if($l_oQuiz->getType() !== iQuiz::WORDPAIR && $l_oQuiz->getType() !== iQuiz::LETTERPAIR){
-                    if($l_aResult['question_id'] === $l_aQuestion['id'] && $l_aResult['answer'] === $l_aQuestion['answer']){
+                    if($l_aResult['question_id'] === $l_aQuestion['quizInfo']['id'] && $l_aResult['answer'] === $l_aQuestion['quizInfo']['answer']){
                         $l_iAmountOfCorrectAnswers++;
-                        $l_iResultScore += $l_aQuestion['score'];
+                        $l_iResultScore += $l_aQuestion['quizInfo']['score'];
                     }
                 }else{
-                    $l_aAnswer = $l_aQuestion['answer1'] . " " . $l_aQuestion['answer2'];
-                    if($l_aResult['question_id'] === $l_aQuestion['id'] && $l_aResult['answer'] === $l_aAnswer){
+                    $l_aAnswer = $l_aQuestion['quizInfo']['answer1'] . " " . $l_aQuestion['quizInfo']['answer2'];
+                    if($l_aResult['question_id'] === $l_aQuestion['quizInfo']['id'] && $l_aResult['answer'] === $l_aAnswer){
                         $l_iAmountOfCorrectAnswers++;
-                        $l_iResultScore += $l_aQuestion['score'];
+                        $l_iResultScore += $l_aQuestion['quizInfo']['score'];
                     }
                 }
             }
         }
 
         $l_iAmountOfIncorrectAnswers = $l_iTotalAmountOfQuestions - $l_iAmountOfCorrectAnswers;
-        $l_iPercentage = (int)$l_iResultScore/$l_iTotalScore * 100;
+        if($l_iTotalScore === 0){
+            $l_iPercentage = 0;
+        }else{
+            $l_iPercentage = (int)$l_iResultScore/$l_iTotalScore * 100;
+        }
         $l_sResult = $this->_hasPassed($l_oQuiz, (int)$l_iPercentage);
 
         return array(

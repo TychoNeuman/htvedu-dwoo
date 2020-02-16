@@ -22,5 +22,8 @@
     {if $type === 2}
         {include 'quizpages/showwordpair.tpl'}
     {/if}
+    {if $type === 3}
+        {include 'quizpages/showletterpair.tpl'}
+    {/if}
 
 {/block}

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Model\Quiz;
 
 use App\Database\HtvDb;
+use App\Model\Quiz\Quiz;
 
-class Wordpair implements iQuiz
+class Wordpair extends Quiz implements iQuiz
 {
     private $m_iId;
     private $m_sName;
@@ -27,8 +28,55 @@ class Wordpair implements iQuiz
                                            `quiz_id` = ' . $this->m_iId);
             $l_oPreparedStatement->execute();
 
-            return $l_oPreparedStatement->fetchAll();
+            $l_aQuestions = $l_oPreparedStatement->fetchAll();
+
+            $l_aQuestionsArray = array();
+
+            foreach($l_aQuestions as $l_aQuestion){
+                $l_aQuestionsArray[] = array(
+                    'quizInfo' => $l_aQuestion,
+                    'shuffled' => $this->shuffleAnswers($l_aQuestion)
+                );
+            }
+
+            return $l_aQuestionsArray;
         }
+    }
+
+    public function deleteQuestions() : void
+    {
+        $l_oDb = HtvDb::getInstance();
+        $l_oPreparedStatement = $l_oDb->prepare("SELECT count(id) as `count` FROM `questions_wordpair` WHERE `quiz_id` = " . $this->m_iId);
+        $l_oPreparedStatement->execute();
+        $l_iCount = $l_oPreparedStatement->fetchObject();
+
+        if($l_iCount->count > 0){
+            $l_oPreparedStatement = $l_oDb->prepare(
+                'DELETE FROM `questions_wordpair` WHERE `quiz_id` = ' . $this->m_iId
+            );
+            $l_oPreparedStatement->execute();
+        }
+    }
+
+    public function deleteMe(): void
+    {
+        parent::deleteSelf($this);
+    }
+
+    private function shuffleAnswers(array $p_aQuestionArray): array
+    {
+
+        $l_aShuffledAnswersArray = array(
+            $p_aQuestionArray['answer1'] . " " . $p_aQuestionArray['answer2'],
+            $p_aQuestionArray['incorrect_answer1'],
+            $p_aQuestionArray['incorrect_answer2'],
+            $p_aQuestionArray['incorrect_answer3'],
+            $p_aQuestionArray['incorrect_answer4']
+        );
+
+        shuffle($l_aShuffledAnswersArray);
+
+        return $l_aShuffledAnswersArray;
     }
 
     public function setId(int $p_iId) {$this->m_iId = $p_iId;}
@@ -43,4 +91,5 @@ class Wordpair implements iQuiz
     public function getScore(): int {return $this->m_iScore;}
     public function setQuestions(array $p_aQuestions) {$this->m_aQuestions = $p_aQuestions;}
     public function getQuestions(): array {return $this->m_aQuestions;}
+
 }

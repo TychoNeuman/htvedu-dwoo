@@ -6,7 +6,7 @@ namespace App\Model\Quiz;
 
 use App\Database\HtvDb;
 
-class NumberSeries implements IQuiz
+class NumberSeries extends Quiz implements IQuiz
 {
     private $m_iId;
     private $m_sName;
@@ -27,8 +27,53 @@ class NumberSeries implements IQuiz
                                            `quiz_id` = ' . $this->m_iId);
             $l_oPreparedStatement->execute();
 
-            return $l_oPreparedStatement->fetchAll();
+            $l_aQuestions = $l_oPreparedStatement->fetchAll();
+
+            $l_aQuestionsArray = array();
+
+            foreach($l_aQuestions as $l_aQuestion){
+                $l_aQuestionsArray[] = array(
+                    'quizInfo' => $l_aQuestion,
+                    'shuffled' => $this->shuffleAnswers($l_aQuestion)
+                );
+            }
+
+            return $l_aQuestionsArray;
         }
+    }
+
+    public function deleteQuestions() : void
+    {
+        $l_oDb = HtvDb::getInstance();
+        $l_oPreparedStatement = $l_oDb->prepare("SELECT count(id) as `count` FROM `questions_numberseries` WHERE `quiz_id` = " . $this->m_iId);
+        $l_oPreparedStatement->execute();
+        $l_iCount = $l_oPreparedStatement->fetchObject();
+
+        if($l_iCount->count > 0){
+            $l_oPreparedStatement = $l_oDb->prepare(
+                'DELETE FROM `questions_numberseries` WHERE `quiz_id` = ' . $this->m_iId
+            );
+            $l_oPreparedStatement->execute();
+        }
+    }
+
+    public function deleteMe(): void
+    {
+        parent::deleteSelf($this);
+    }
+
+    private function shuffleAnswers(array $p_aQuestionArray): array
+    {
+        $l_aShuffledAnswersArray = array(
+            $p_aQuestionArray['incorrect_num1'],
+            $p_aQuestionArray['incorrect_num2'],
+            $p_aQuestionArray['incorrect_num3'],
+            $p_aQuestionArray['answer']
+        );
+
+        shuffle($l_aShuffledAnswersArray);
+
+        return $l_aShuffledAnswersArray;
     }
 
     public function setId(int $p_iId) {$this->m_iId = $p_iId;}

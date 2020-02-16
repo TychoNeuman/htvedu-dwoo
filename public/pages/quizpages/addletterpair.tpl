@@ -11,6 +11,8 @@
     <input type="text" name="incorrect-answer2">
     <input type="text" name="incorrect-answer3">
     <input type="text" name="incorrect-answer4">
+    <input type="text" name="incorrect-answer5">
+    <input type="text" name="incorrect-answer6">
     <input type="text" name="score">
     <input type="submit">
 </form>

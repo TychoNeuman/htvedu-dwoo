@@ -29,6 +29,12 @@ if (!isset($_SESSION['username'])) {
 } else {
     if (isset($_GET['p'])) {
         switch ($_GET['p']) {
+            case 'delete-test' :
+                $l_iQuizId = (int)$_GET['id'];
+                $l_oQuizController = new QuizController();
+                $l_oQuizController->deleteQuiz($l_iQuizId);
+                break;
+
             case 'login' :
                 echo $l_oDwoo->get(PAGES_BASE . 'login.tpl');
                 break;
@@ -100,18 +106,20 @@ if (!isset($_SESSION['username'])) {
                     'quizname' => $l_oQuiz->getName(),
                     'quizscore' => $l_oQuiz->getScore(),
                     'quiztime' => $l_oQuiz->getTime(),
-                    'questions' => $l_oQuiz->getQuestions()
+                    'questions' => $l_oQuiz->getQuestions(),
+                    'index' => 1
                 );
                 echo $l_oDwoo->get(PAGES_BASE . 'quizaddquestions.tpl', $l_aData);
                 break;
             case 'quizpage' :
-                //TODO : Seriously, don't forget to shuffle the questions
                 $l_oQuizController = new QuizController();
                 $l_oQuiz = $l_oQuizController->getQuiz((int)$_GET['id']);
-                if ($_SERVER['REQUEST_METHOD'] == "POST") {
+
+                if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     $l_oUserController = new UserController();
                     $l_oQuizController->submitQuizAnswers($l_oQuiz, $_POST, $l_oUserController->getUser($_SESSION['id']));
                 }
+
                 $l_aData = array(
                     'type' => $l_oQuiz->getType(),
                     'quiztype' => $l_oQuizController->determineQuizType($l_oQuiz->getType()),
@@ -129,7 +137,6 @@ if (!isset($_SESSION['username'])) {
                 $l_aData = $l_oResultsController->getResultOverviewStudents();
                 echo $l_oDwoo->get(PAGES_BASE . 'results.tpl', $l_aData);
                 break;
-            //TODO : This might get removed entirely
             case 'results-per-student' :
                 $l_oResultsController = new ResultsController();
                 $l_aQuizResults = $l_oResultsController->fetchResultsAllStudents();

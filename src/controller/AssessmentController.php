@@ -54,16 +54,18 @@ class AssessmentController
             return $l_aStudentArray;
         }
 
+        $l_aFilteredStudentArray = $l_aStudentArray;
+
         //Now, unset all the students that are already assessed
         for($l_iCounter = 0; $l_iCounter < count($l_aStudentArray); $l_iCounter++){
             foreach($l_aAssessedStudentArray as $l_aAssessedStudent){
-                if($l_aStudentArray[$l_iCounter]['id'] == $l_aAssessedStudent['user_id']){
-                    unset($l_aStudentArray[$l_iCounter]);
+                if((int)$l_aStudentArray[$l_iCounter]['id'] === (int)$l_aAssessedStudent['user_id']){
+                    unset($l_aFilteredStudentArray[$l_iCounter]);
                 }
             }
         }
 
-        return $l_aStudentArray;
+        return $l_aFilteredStudentArray;
     }
 
     public function getAllResultsSingleStudents(int $p_iUserId, string $p_iAssessmentType) : array
@@ -134,12 +136,28 @@ class AssessmentController
         header('Location: index.php?p=assessment');
     }
 
-    public function calculateFinalResultSport(array $p_aSportResults) : float
+    public function calculateFinalResultSport(array $p_aSportResults) : array
     {
         $l_iGradeA = $p_aSportResults['km_grade'];
         $l_iGradeB = round(($p_aSportResults['push_up_time'] + $p_aSportResults['sit_up_grade']) / 2, 0);
+        $l_fFinalScore = round(($l_iGradeA + $l_iGradeB) / 2, 0);
 
-        return round(($l_iGradeA + $l_iGradeB) / 2, 0);
+        if($l_fFinalScore >= 0 && $l_fFinalScore <= 5){
+            return array(
+                'score' => $l_fFinalScore,
+                'grade' => ResultsController::INADEQUATE
+            );
+        }else if($l_fFinalScore > 5 && $l_fFinalScore <= 8){
+            return array(
+                'score' => $l_fFinalScore,
+                'grade' => ResultsController::SUFFICIENT
+            );
+        }else{
+            return array(
+                'score' => $l_fFinalScore,
+                'grade' => ResultsController::EXCELLENT
+            );
+        }
     }
 
     public function calculateFinalResultGroup(array $p_aGroupResults) : string
@@ -171,12 +189,29 @@ class AssessmentController
         }
     }
 
-    public function calculateFinalResultAssignment(array $p_aAssignmentResults) : int
+    public function calculateFinalResultAssignment(array $p_aAssignmentResults) : array
     {
         //Again, remove the first and second item from the array (id and user id)
         array_shift($p_aAssignmentResults);
         array_shift($p_aAssignmentResults);
 
-        return array_sum($p_aAssignmentResults);
+        $l_iFinalScore = array_sum($p_aAssignmentResults);
+
+        if($l_iFinalScore >= 0 && $l_iFinalScore <= 60){
+            return array(
+                'score' => $l_iFinalScore,
+                'grade' => ResultsController::INADEQUATE
+            );
+        }else if($l_iFinalScore > 60 && $l_iFinalScore <= 75){
+            return array(
+                'score' => $l_iFinalScore,
+                'grade' => ResultsController::SUFFICIENT
+            );
+        }else{
+            return array(
+                'score' => $l_iFinalScore,
+                'grade' => ResultsController::EXCELLENT
+            );
+        }
     }
 }

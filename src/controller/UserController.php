@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Database\HtvDb;
+use App\Model\Quiz\IQuiz;
 use App\Model\User;
 use App\System\HtvConfig;
 
@@ -129,5 +130,28 @@ class UserController
         $l_oPreparedStatement->execute($l_aBindings);
 
         header("Location: index.php?p=users");
+    }
+
+    public function deleteSubmittedAnswers(iQuiz $p_oQuiz, User $p_oUser = null)
+    {
+        $l_oDb = HtvDb::getInstance();
+        $l_sQuery = "SELECT count(id) as `count` FROM `quiz_submitted_answers`
+                    WHERE `quiz_id` = " . $p_oQuiz->getId();
+        if(!empty($p_oUser)){
+            $l_sQuery .= " AND `user_id` = " . $p_oUser->getId();
+        }
+
+        $l_oPreparedStatement = $l_oDb->prepare($l_sQuery);
+        $l_oPreparedStatement->execute();
+        $l_iCount = $l_oPreparedStatement->fetchObject();
+
+        if($l_iCount->count > 0){
+            $l_sQuery = "DELETE FROM `quiz_submitted_answers` WHERE `quiz_id` = " . $p_oQuiz->getId();
+            if(!empty($p_oUser)){
+                $l_sQuery .= " AND `user_id` = " . $p_oUser->getId();
+            }
+            $l_oPreparedStatement = $l_oDb->prepare($l_sQuery);
+            $l_oPreparedStatement->execute();
+        }
     }
 }

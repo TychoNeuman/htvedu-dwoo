@@ -46,13 +46,13 @@
 {foreach $questions question}
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Vraag [1]</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Vraag {$index++}</h6>
         </div>
         <div class="card-body">
-            <p><strong>Opties: </strong> {$question.num1}, {$question.num2}, {$question.num3} {$question.num4}, {$question.num5}, {$question.num6}</p>
-            <p><strong>Incorrecte opties: </strong>{$question.incorrect_num1}, {$question.incorrect_num2}, {$question.incorrect_num3}</p>
-            <p><strong>Antwoord: </strong> {$question.answer}</p>
-            <p><strong>Score: </strong> {$question.score}</p>
+            <p><strong>Opties: </strong> {$question.quizInfo.num1}, {$question.quizInfo.num2}, {$question.quizInfo.num3} {$question.quizInfo.num4}, {$question.quizInfo.num5}, {$question.quizInfo.num6}</p>
+            <p><strong>Incorrecte opties: </strong>{$question.quizInfo.incorrect_num1}, {$question.quizInfo.incorrect_num2}, {$question.quizInfo.incorrect_num3}</p>
+            <p><strong>Antwoord: </strong> {$question.quizInfo.answer}</p>
+            <p><strong>Score: </strong> {$question.quizInfo.score}</p>
         </div>
     </div>
 {/foreach}

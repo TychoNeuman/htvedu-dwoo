@@ -86,13 +86,13 @@ class QuizController
 
         switch($l_aResult['type'])
         {
-            case 1 :
+            case iQuiz::NUMBERSERIES :
                 $l_oQuiz = self::_setQuiz(new NumberSeries(), $l_aResult);
                 break;
-            case 2 :
+            case iQuiz::WORDPAIR :
                 $l_oQuiz = self::_setQuiz(new Wordpair(), $l_aResult);
                 break;
-            case 3 :
+            case iQuiz::LETTERPAIR :
                 $l_oQuiz = self::_setQuiz(new Letterpair(), $l_aResult);
                 break;
         }
@@ -125,7 +125,7 @@ class QuizController
     {
         switch($l_oQuiz->getType())
         {
-            case 1 :
+            case iQuiz::NUMBERSERIES :
                 $l_oPreparedStatement = HtvDb::getInstance()
                     ->prepare("INSERT INTO 
                                                 `questions_numberseries` 
@@ -152,7 +152,7 @@ class QuizController
                 );
                 $l_oPreparedStatement->execute($l_aBindings);
                 break;
-            case 2 :
+            case iQuiz::WORDPAIR :
                 $l_oPreparedStatement = HtvDb::getInstance()
                     ->prepare("INSERT INTO 
                                                 `questions_wordpair` 
@@ -177,16 +177,16 @@ class QuizController
                 );
                 $l_oPreparedStatement->execute($l_aBindings);
                 break;
-            case 3 :
+            case iQuiz::LETTERPAIR :
                 $l_oPreparedStatement = HtvDb::getInstance()
                     ->prepare("INSERT INTO 
                                                 `questions_letterpair` 
                                                 (`quiz_id`, `pair1a`, `pair1b`, `pair2a`, `pair2b`, `pair3a`, `pair3b`,
-                                                `answer1`, `answer2`, `incorrect_answer1`, `incorrect_answer2`, `incorrect_answer3`, `incorrect_answer4`,
+                                                `answer1`, `answer2`, `incorrect_answer1`, `incorrect_answer2`, `incorrect_answer3`, `incorrect_answer4`, `incorrect_answer5`, `incorrect_answer6`,
                                                  `score`) 
                                         VALUES 
                                                (:quiz_id, :pair1a, :pair1b, :pair2a, :pair2b, :pair3a, :pair3b, 
-                                                :answer1, :answer2, :incorrect_answer1, :incorrect_answer2, :incorrect_answer3, :incorrect_answer4,
+                                                :answer1, :answer2, :incorrect_answer1, :incorrect_answer2, :incorrect_answer3, :incorrect_answer4, :incorrect_answer5, :incorrect_answer6, 
                                                 :score)");
                 $l_aBindings = array(
                     'quiz_id' => $l_oQuiz->getId(),
@@ -202,6 +202,8 @@ class QuizController
                     'incorrect_answer2' => $l_aPost['incorrect-answer2'],
                     'incorrect_answer3' => $l_aPost['incorrect-answer3'],
                     'incorrect_answer4' => $l_aPost['incorrect-answer4'],
+                    'incorrect_answer5' => $l_aPost['incorrect-answer5'],
+                    'incorrect_answer6' => $l_aPost['incorrect-answer6'],
                     'score' => $l_aPost['score']
                 );
                 $l_oPreparedStatement->execute($l_aBindings);
@@ -257,5 +259,14 @@ class QuizController
         }
 
         header('Location: index.php?p=quiz');
+    }
+
+    public function deleteQuiz(int $p_iQuizId)
+    {
+        $l_oUserController = new UserController();
+        $l_oQuiz =  $this->getQuiz($p_iQuizId);
+        $l_oUserController->deleteSubmittedAnswers($l_oQuiz);
+        $l_oQuiz->deleteQuestions();
+        $l_oQuiz->deleteMe();
     }
 }

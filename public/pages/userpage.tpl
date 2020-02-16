@@ -87,7 +87,32 @@
                         {if empty($assignment) && empty($group) && empty($sport)}
                             <em>Nog niet beoordeeld...</em>
                         {else}
-
+                            <table class="table table-hover">
+                                <thead>
+                                    <th style="border-top: none !important;" scope="col">Onderwerp</th>
+                                    <th style="border-top: none !important;" scope="col">Uitslag</th>
+                                </thead>
+                                <tbody>
+                                {if !empty($group)}
+                                    <tr>
+                                        <td>Groepsopdracht</td>
+                                        <td>{$group}</td>
+                                    </tr>
+                                {/if}
+                                {if !empty($sport)}
+                                    <tr>
+                                        <td>Sport</td>
+                                        <td>{$sport.grade}</td>
+                                    </tr>
+                                {/if}
+                                {if !empty($assignment)}
+                                    <tr>
+                                        <td>Werkstuk</td>
+                                        <td>{$assignment.grade}</td>
+                                    </tr>
+                                {/if}
+                                </tbody>
+                            </table>
                         {/if}
                     </div>
                 </div>

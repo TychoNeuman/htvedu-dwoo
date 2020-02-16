@@ -24,4 +24,6 @@ interface IQuiz
     public function getQuestions() : array;
 
     public function fetchQuestionsToArray() : array;
+    public function deleteQuestions() : void;
+    public function deleteMe() : void;
 }
