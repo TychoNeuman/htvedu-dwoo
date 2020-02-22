@@ -213,14 +213,15 @@ class QuizController
         header("Refresh: 0");
     }
 
-    public function getQuizOverviewProjector() : array
+    public function getQuizOverviewProjector(int $p_iQuizId = null) : array
     {
         $l_aConvertedResult = array();
+        $l_sQuery = "SELECT * FROM `quiz`";
+        if(!empty($p_iQuizId)){
+            $l_sQuery .= " WHERE `id` = " . $p_iQuizId;
+        }
         $l_oPreparedStatement = HtvDb::getInstance()
-            ->prepare("SELECT 
-                                      * 
-                                FROM 
-                                     `quiz` ");
+            ->prepare($l_sQuery);
         $l_oPreparedStatement->execute();
         $l_aResult = $l_oPreparedStatement->fetchAll();
 
@@ -267,6 +268,9 @@ class QuizController
         $l_oQuiz =  $this->getQuiz($p_iQuizId);
         $l_oUserController->deleteSubmittedAnswers($l_oQuiz);
         $l_oQuiz->deleteQuestions();
+        $l_oQuiz->deleteAssignedQuiz();
         $l_oQuiz->deleteMe();
+
+        header('Location: index.php?p=quiz');
     }
 }

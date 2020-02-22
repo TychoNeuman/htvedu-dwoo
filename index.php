@@ -29,12 +29,6 @@ if (!isset($_SESSION['username'])) {
 } else {
     if (isset($_GET['p'])) {
         switch ($_GET['p']) {
-            case 'delete-test' :
-                $l_iQuizId = (int)$_GET['id'];
-                $l_oQuizController = new QuizController();
-                $l_oQuizController->deleteQuiz($l_iQuizId);
-                break;
-
             case 'login' :
                 echo $l_oDwoo->get(PAGES_BASE . 'login.tpl');
                 break;
@@ -51,27 +45,37 @@ if (!isset($_SESSION['username'])) {
                 echo $l_oDwoo->get(PAGES_BASE . 'usersoverview.tpl', $l_aUsers);
                 break;
             case 'userpage' :
-                $l_oUserController = new UserController();
-                $l_oResultsController = new ResultsController();
-                $l_oAssessmentController = new AssessmentController();
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
+                    $l_oUserController = new UserController();
+                    $l_oUserController->assignQuiz($_POST, $_GET['id']);
+                } else {
+                    $l_oUserController = new UserController();
+                    $l_oResultsController = new ResultsController();
+                    $l_oAssessmentController = new AssessmentController();
 
-                $l_aUser = array('user' => $l_oUserController->getUserProjector($_GET['id']));
-                $l_aResults = $l_oResultsController->fetchResultsSingleStudent($_GET['id']);
+                    $l_aUser = array('user' => $l_oUserController->getUserProjector($_GET['id']));
+                    $l_aResults = $l_oResultsController->fetchResultsSingleStudent($_GET['id']);
 
-                $l_aAssignmentResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::ASSIGNMENT);
-                $l_aGroupResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::GROUP);
-                $l_aSportResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::SPORT);
+                    $l_aAssignmentResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::ASSIGNMENT);
+                    $l_aGroupResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::GROUP);
+                    $l_aSportResult = $l_oAssessmentController->getAllResultsSingleStudents($_GET['id'], AssessmentController::SPORT);
 
-                $l_aData = array(
-                    'user' => $l_aUser['user'],
-                    'results' => $l_aResults,
-                    'totalresult' => $l_oResultsController->fetchFinalResultQuiz($l_aResults),
-                    'assignment' => empty($l_aAssignmentResult) ? $l_aAssignmentResult : $l_oAssessmentController->calculateFinalResultAssignment($l_aAssignmentResult[0]),
-                    'group' => empty($l_aGroupResult) ? $l_aGroupResult : $l_oAssessmentController->calculateFinalResultGroup($l_aGroupResult[0]),
-                    'sport' => empty($l_aSportResult) ? $l_aSportResult : $l_oAssessmentController->calculateFinalResultSport($l_aSportResult[0]),
-                );
+                    $l_aAssignedQuiz = $l_oUserController->getAllAssignedQuiz($l_aUser['user']['id']);
+                    $l_aNotAssignedQuiz = $l_oUserController->getAllNotAssignedQuiz($l_aUser['user']['id']);
 
-                echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);
+                    $l_aData = array(
+                        'user' => $l_aUser['user'],
+                        'results' => $l_aResults,
+                        'totalresult' => $l_oResultsController->fetchFinalResultQuiz($l_aResults),
+                        'assignment' => empty($l_aAssignmentResult) ? $l_aAssignmentResult : $l_oAssessmentController->calculateFinalResultAssignment($l_aAssignmentResult[0]),
+                        'group' => empty($l_aGroupResult) ? $l_aGroupResult : $l_oAssessmentController->calculateFinalResultGroup($l_aGroupResult[0]),
+                        'sport' => empty($l_aSportResult) ? $l_aSportResult : $l_oAssessmentController->calculateFinalResultSport($l_aSportResult[0]),
+                        'assignedQuiz' => $l_aAssignedQuiz,
+                        'notAssignedQuiz' => $l_aNotAssignedQuiz
+                    );
+
+                    echo $l_oDwoo->get(PAGES_BASE . 'userpage.tpl', $l_aData);
+                }
                 break;
             case 'useradd' :
                 if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -82,8 +86,13 @@ if (!isset($_SESSION['username'])) {
                 }
                 break;
             case 'quiz' :
-                $l_oQuizController = new QuizController();
-                $l_aData = array('quizes' => $l_oQuizController->getQuizOverviewProjector());
+                if($_SESSION['role'] === 'Admin'){
+                    $l_oQuizController = new QuizController();
+                    $l_aData = array('quizes' => $l_oQuizController->getQuizOverviewProjector());
+                }else if($_SESSION['role'] === 'Student'){
+                    $l_oUserController = new UserController();
+                    $l_aData = array('quizes' => $l_oUserController->getAllAssignedQuiz($_SESSION['id']));
+                }
                 echo $l_oDwoo->get(PAGES_BASE . 'quizoverview.tpl', $l_aData);
                 break;
             case 'quizaddinfo' :
@@ -131,6 +140,11 @@ if (!isset($_SESSION['username'])) {
                 );
 
                 echo $l_oDwoo->get(PAGES_BASE . 'quizpage.tpl', $l_aData);
+                break;
+            case 'delete-quiz' :
+                $l_iQuizId = $_GET['quiz-id'];
+                $l_oQuizController = new QuizController();
+                $l_oQuizController->deleteQuiz($l_iQuizId);
                 break;
             case 'results' :
                 $l_oResultsController = new ResultsController();

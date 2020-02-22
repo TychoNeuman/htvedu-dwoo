@@ -25,5 +25,6 @@ interface IQuiz
 
     public function fetchQuestionsToArray() : array;
     public function deleteQuestions() : void;
+    public function deleteAssignedQuiz() : void;
     public function deleteMe() : void;
 }

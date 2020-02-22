@@ -154,4 +154,75 @@ class UserController
             $l_oPreparedStatement->execute();
         }
     }
+
+    public function getAllAssignedQuiz(int $p_iUserId) : array
+    {
+        $l_oQuizController = new QuizController();
+        $l_oHtvDb = HtvDb::getInstance();
+
+        $l_oPreparedStatement = $l_oHtvDb->prepare("SELECT * FROM `assigned_quiz` WHERE `user_id` = " . $p_iUserId);
+        $l_oPreparedStatement->execute();
+
+        $l_aAssignedQuiz = $l_oPreparedStatement->fetchAll();
+        $l_aAllQuiz = $l_oQuizController->getQuizOverviewProjector();
+        $l_aFilteredArray = array();
+
+        if(!empty($l_aAssignedQuiz)){
+            foreach ($l_aAssignedQuiz as $l_aSingleAssignedQuiz){
+                for($l_iIndex = 0; $l_iIndex < count($l_aAllQuiz); $l_iIndex++){
+                    if($l_aSingleAssignedQuiz['quiz_id'] === $l_aAllQuiz[$l_iIndex]['id']){
+                        $l_aFilteredArray[] = $l_aAllQuiz[$l_iIndex];
+                    }
+                }
+            }
+        }
+
+        return $l_aFilteredArray;
+    }
+
+    public function getAllNotAssignedQuiz(int $p_iUserId) : array
+    {
+        $l_oHtvDb = HtvDb::getInstance();
+
+        $l_aAssignedQuizes = $this->getAllAssignedQuiz($p_iUserId);
+
+        $l_oPreparedStatement = $l_oHtvDb->prepare("SELECT `id`, `name` FROM `quiz`");
+        $l_oPreparedStatement->execute();
+        $l_aQuizIdArray = $l_oPreparedStatement->fetchAll();
+
+        $l_aFilterArray = array();
+
+        foreach($l_aQuizIdArray as $l_aQuizId){
+            $l_aFilterArray[] =  array(
+                'id' => $l_aQuizId['id'],
+                'name' => $l_aQuizId['name']);
+        }
+
+        if(!empty($l_aAssignedQuizes)){
+            foreach($l_aAssignedQuizes as $l_aAssignedQuiz){
+                for($l_iIndex = 0; $l_iIndex < count($l_aQuizIdArray); $l_iIndex++){
+                    if($l_aAssignedQuiz['id'] === $l_aQuizIdArray[$l_iIndex]['id']){
+                        unset($l_aFilterArray[$l_iIndex]);
+                    }
+                }
+            }
+        }
+
+        return $l_aFilterArray;
+
+    }
+
+    public function assignQuiz(array $p_aPost, int $p_iUserId)
+    {
+        $l_oHtvDb = HtvDb::getInstance();
+        $l_oPreparedStatement = $l_oHtvDb->prepare(
+        "INSERT INTO `assigned_quiz` (`user_id`, `quiz_id`) VALUES (:user_id, :quiz_id)"
+        );
+        $l_aBindings = array(
+            'user_id' => $p_iUserId,
+            'quiz_id' => (int)$p_aPost['assign-quiz']
+        );
+        $l_oPreparedStatement->execute($l_aBindings);
+        header('Location: index.php?p=userpage&id=' . $p_iUserId);
+    }
 }

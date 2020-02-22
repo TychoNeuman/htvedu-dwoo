@@ -57,6 +57,11 @@ class NumberSeries extends Quiz implements IQuiz
         }
     }
 
+    public function deleteAssignedQuiz() : void
+    {
+        parent::deleteAssigned($this);
+    }
+
     public function deleteMe(): void
     {
         parent::deleteSelf($this);

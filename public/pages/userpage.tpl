@@ -35,7 +35,21 @@
                         <h6 class="m-0 font-weight-bold text-primary">Toets Toewijzen</h6>
                     </div>
                     <div class="card-body">
-                        <em>Hier kun je straks toetsen toewijzen</em>
+                        {if !empty($assignedQuiz)}
+                            {foreach $assignedQuiz as assigned}
+                                <p>{$assigned.name}</p>
+                            {/foreach}
+                        {/if}
+                        {if !empty($notAssignedQuiz)}
+                        <form method="POST">
+                        <select name="assign-quiz">
+                            {foreach $notAssignedQuiz as notAssigned}
+                                <option value="{$notAssigned.id}">{$notAssigned.name}</option>
+                            {/foreach}
+                                <input type="submit" value="Toewijzen">
+                        </select>
+                        </form>
+                        {/if}
                     </div>
                 </div>
 
