@@ -4,7 +4,15 @@
     <div class="container-fluid">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Toetsen | Toevoegen</h1>
+        {if $type === 1}
+            <h1 class="h4 mb-0 text-gray-800">Cijferreeks toevoegen</h1>
+        {/if}
+        {if $type === 2}
+            <h1 class="h4 mb-0 text-gray-800">Woordpaar toevoegen</h1>
+        {/if}
+        {if $type === 3}
+            <h1 class="h4 mb-0 text-gray-800">Letterpaar toevoegen</h1>
+        {/if}
     </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">

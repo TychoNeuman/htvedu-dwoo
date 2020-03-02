@@ -1,7 +1,7 @@
 {extends 'layouts/base.tpl'}
 
 {block "content"}
-    <div class="col-xl-8 col-lg-7">
+    <div class="col-xl-12 col-lg-7">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="col-xl-8 col-lg-7">
+    <div class="col-xl-12 col-lg-7">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="col-xl-8 col-lg-7">
+    <div class="col-xl-12 col-lg-7">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

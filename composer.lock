@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29795f98ee71d1c66bb1ffce04908be1",
+    "content-hash": "055423772ad27967a35c305c93ef06c7",
     "packages": [
         {
             "name": "dwoo/dwoo",
@@ -53,6 +53,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo": "*"
+    },
     "platform-dev": []
 }

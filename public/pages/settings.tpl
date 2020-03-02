@@ -7,13 +7,13 @@
             <b>Slagingsperentage</b>
             <form method="post">
                 {foreach $percentagesettings as setting}
-                    <ul>
-                        <li>{$setting.type_name}</li>
-                        <input type="text" value="{$setting.percentage_low}" name="percentage-low-{$setting.id}">
-                        <input type="text" value="{$setting.percentage_high}" name="percentage-high-{$setting.id}">
-                    </ul>
+                    <div class="form-row">
+                        {$setting.type_name}
+                        <input type="text" value="{$setting.percentage_low}" name="percentage-low-{$setting.id}" class="form-control">
+                        <input type="text" value="{$setting.percentage_high}" name="percentage-high-{$setting.id}" class="form-control">
+                    </div>
                 {/foreach}
-                <input type="submit">
+                <input type="submit" class="btn btn-primary">
             </form>
         </div>
     </div>

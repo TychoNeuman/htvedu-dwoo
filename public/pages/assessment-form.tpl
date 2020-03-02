@@ -1,7 +1,6 @@
 {extends 'layouts/base.tpl'}
 
 {block 'content'}
-   {$user.firstname} {$user.lastname}
    {if $subject === "sport"}
       {include "assessmentpages/sportform.tpl"}
    {/if}

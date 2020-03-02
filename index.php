@@ -118,6 +118,7 @@ if (!isset($_SESSION['username'])) {
                     'questions' => $l_oQuiz->getQuestions(),
                     'index' => 1
                 );
+
                 echo $l_oDwoo->get(PAGES_BASE . 'quizaddquestions.tpl', $l_aData);
                 break;
             case 'quizpage' :

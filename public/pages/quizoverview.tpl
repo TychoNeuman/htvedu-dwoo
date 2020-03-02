@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Toetsen | Overzicht</h1>
+        <h1 class="h4 mb-0 text-gray-800">Toetsoverzicht</h1>
     </div>
         {if empty($quizes)}
             <em>Nog geen toetsen aangemaakt...</em>
@@ -20,7 +20,7 @@
                             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
                                 <div class="dropdown-header">Acties:</div>
                                 <a class="dropdown-item" href="index.php?p=delete-quiz&quiz-id={$quiz.id}">Verwijderen</a>
-                                <a class="dropdown-item" href="#">Wijzigen</a>
+                                <a class="dropdown-item" href="index.php?p=quizaddquestions&id={$quiz.id}">Wijzigen</a>
                             </div>
                         </div>
                         <div class="card-body">

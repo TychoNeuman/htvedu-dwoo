@@ -35,5 +35,3 @@
         <button type="submit" class="btn btn-primary" name="submit">Verzenden</button>
     </form>
 </div>
-
-{*{$question.num1}*}

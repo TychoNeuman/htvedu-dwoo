@@ -41,13 +41,13 @@
                             {/foreach}
                         {/if}
                         {if !empty($notAssignedQuiz)}
-                        <form method="POST">
-                        <select name="assign-quiz">
-                            {foreach $notAssignedQuiz as notAssigned}
-                                <option value="{$notAssigned.id}">{$notAssigned.name}</option>
-                            {/foreach}
-                                <input type="submit" value="Toewijzen">
-                        </select>
+                        <form method="post">
+                            <select name="assign-quiz" class="form-control">
+                                {foreach $notAssignedQuiz as notAssigned}
+                                    <option value="{$notAssigned.id}">{$notAssigned.name}</option>
+                                {/foreach}
+                            </select>
+                            <input type="submit" value="Toewijzen" class="btn btn-primary">
                         </form>
                         {/if}
                     </div>
