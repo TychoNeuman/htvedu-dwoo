@@ -8,7 +8,7 @@
             <div class="card-body">
                 <div class="text-xs text-primary mb-1">Naam Toets:  <span style="color: black;"><strong>{$quizname}</strong></span></div>
                 <div class="text-xs text-primary mb-1">Soort:  <span style="color: black;"><strong>{$quiztype}</strong></span></div>
-                <div class="text-xs text-primary mb-1">Tijd:  <span style="color: black;"><strong>{$quiztime} minuten</strong></span></div>
+                <div class="text-xs text-primary mb-1">Tijd:  <span style="color: black;"><strong><span id="quiztime">{$quiztime}</span> minuten</strong></span></div>
                 <div class="text-xs text-primary mb-1">Score:  <span style="color: black;"><strong>{$quizscore}</strong></span></div>
             </div>
         </div>

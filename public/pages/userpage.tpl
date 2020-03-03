@@ -47,7 +47,7 @@
                                     <option value="{$notAssigned.id}">{$notAssigned.name}</option>
                                 {/foreach}
                             </select>
-                            <input type="submit" value="Toewijzen" class="btn btn-primary">
+                            <input type="submit" value="Toewijzen" class="btn btn-primary mt-3">
                         </form>
                         {/if}
                     </div>
